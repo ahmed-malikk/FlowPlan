@@ -1,6 +1,6 @@
 # PRD: FlowPlan
 
-**Author:** Ahmed Malik · **Date:** 2026-10-06 · **Status:** Draft
+**Author:** Ahmed Malik · **Date:** 2026-10-06 · **Status:** Shipped (v1.0, 2026-10-07) · **Live:** https://flow-plan-five.vercel.app/
 
 ## 1. Problem
 Small teams (student groups, 2–5 person startups, freelancers juggling a client project) plan work in WhatsApp threads, sticky notes or a flat to-do list. A flat list doesn't show which tasks are *blocking* others, so when one slips nobody knows whether the deadline is now at risk until it's too late. Heavy tools like MS Project or Jira Advanced Roadmaps solve this but are expensive, slow to learn, and overkill for a 3-week plan.
@@ -65,8 +65,14 @@ The algorithm is pure functions with no React imports, so it's tested with Vites
 
 ## 8. Release plan
 - **v0.1 (MVP):** 2026-10-07 — stories 1–6, tests + CI, deployed on Vercel with sample plan.
-- **v1.0:** 2026-10-07 — README (gist, Mermaid diagram, screenshot of my real 3-week plan), tagged release.
+- **v1.0:** 2026-10-07 — deployed on Vercel; README with live link, screenshots, Mermaid diagrams and the gist; test plan and test report; tagged release. (Screenshot of my real 3-week plan follows in #10.)
 - **v1.1 (ideas, not scheduled):** calendar dates + weekends, export as PNG, share via URL.
 
 ## 9. Results (fill after launch)
 <!-- Real numbers only. e.g. "Tested with 3 classmates: 3/3 named the critical path; median time 3m40s." -->
+**As of 2026-10-07 (v1.0):**
+- **Quality (met):** 44 / 44 unit tests pass in CI on every push; the scheduler matches the hand-calculated worked example exactly, plus 3 more projects and 9 edge cases.
+- **System tests:** 14 user journeys × 3 environments (desktop Edge, desktop Chrome, 375 px phone): 42 / 42 on the local production build and 42 / 42 on the live site. See [test report](test-report.md).
+- **Defects:** testing found 2 phone-only layout bugs (#11, #13); both fixed before release.
+- **Primary metric (own 3-week plan):** not yet done, tracked in #10.
+- **Secondary metric (3 hallway testers):** not yet run; protocol in [test plan §8](test-plan.md#8-usability-test-manual).

@@ -70,6 +70,8 @@ Commands: `npm test` and `npm run test:e2e`. Every system test starts with empty
 
 Final run: 42 tests in 2.5 minutes, 0 failures, 0 retries.
 
+**Production check.** After deployment, the same 42 tests were run against the live site (`E2E_BASE_URL=https://flow-plan-five.vercel.app npx playwright test`, 2026-10-07): **42 / 42 passed** in 3.0 minutes, with no test changes. The deployed build behaves the same as the tested one.
+
 ## 4. Defects
 
 | ID | Found by | Description | Severity | Fix | Status |
