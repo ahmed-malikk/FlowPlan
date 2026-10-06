@@ -6,6 +6,8 @@ import { defineConfig } from "@playwright/test";
  * already installed on the machine, so nothing extra is downloaded.
  */
 const PORT = 3210;
+// Set E2E_BASE_URL to test a deployed site instead, e.g. the live Vercel URL.
+const remote = process.env.E2E_BASE_URL;
 
 export default defineConfig({
   testDir: "e2e",
@@ -13,16 +15,18 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: `http://localhost:${PORT}`,
+    baseURL: remote ?? `http://localhost:${PORT}`,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  webServer: {
-    command: `npx next start -p ${PORT}`,
-    url: `http://localhost:${PORT}`,
-    reuseExistingServer: false,
-    timeout: 60_000,
-  },
+  webServer: remote
+    ? undefined
+    : {
+        command: `npx next start -p ${PORT}`,
+        url: `http://localhost:${PORT}`,
+        reuseExistingServer: false,
+        timeout: 60_000,
+      },
   projects: [
     { name: "desktop-edge", use: { channel: "msedge", viewport: { width: 1280, height: 860 } } },
     { name: "desktop-chrome", use: { channel: "chrome", viewport: { width: 1280, height: 860 } } },
