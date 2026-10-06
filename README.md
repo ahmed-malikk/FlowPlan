@@ -54,10 +54,23 @@ The worked example above takes 12 days, and its critical path is A → B → C �
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # Vitest: scheduler, validation, storage
+npm test           # Vitest unit tests: scheduler, validation, storage
+npm run test:e2e   # Playwright system tests in Edge, Chrome and a 375px phone view
 npm run typecheck
 npm run build
 ```
+
+The system tests use the Edge and Chrome already installed on the machine. To test on a real phone, run the production build on your network: `npm run build`, then `npx next start -H 0.0.0.0`, and open `http://<your-laptop-ip>:3000` on the phone (same Wi-Fi). `npm run dev` only serves its scripts to `localhost`, so it won't work on a phone.
+
+## Testing
+
+| Level | Tool | Cases | Latest result |
+|---|---|---|---|
+| Unit | Vitest | 44 | 44 / 44 pass |
+| System (end-to-end) | Playwright | 14 cases × 3 environments | 42 / 42 pass |
+| Usability | 3 first-time users | protocol in the test plan | not yet run |
+
+Testing found two layout defects on phones ([#11](https://github.com/ahmed-malikk/FlowPlan/issues/11), [#13](https://github.com/ahmed-malikk/FlowPlan/issues/13)); both are fixed. See the [test plan](docs/test-plan.md) and [test report](docs/test-report.md).
 
 ## Project structure
 
@@ -78,3 +91,5 @@ Next.js · TypeScript · Vitest · GitHub Actions · Vercel
 ## Docs
 
 - [Product Requirements Document](docs/PRD.md)
+- [Test plan](docs/test-plan.md)
+- [Test report](docs/test-report.md)
