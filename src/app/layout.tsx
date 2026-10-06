@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
@@ -35,6 +36,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Source on GitHub
           </a>
         </footer>
+        {/* Vercel Web Analytics: anonymous page views on the live site only (does nothing locally). */}
+        <Analytics />
       </body>
     </html>
   );
