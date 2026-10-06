@@ -192,6 +192,8 @@ tr.is-critical .task-name { color: var(--critical); }
 .picker summary::after { content: "▾"; position: absolute; right: 10px; color: var(--muted); }
 .picker[aria-invalid="true"] summary { border-color: var(--error); }
 .picker-menu { position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0; min-width: 220px; max-height: 260px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.12); padding: 4px; }
+/* Stacked form on narrow screens: keep the list in the page flow so it pushes the buttons down instead of covering them. */
+@media (max-width: 860px) { .picker-menu { position: static; min-width: 0; margin-top: 4px; box-shadow: none; } }
 .picker-option { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 14px; }
 .picker-option:hover { background: var(--surface-2); }
 .picker-option input { accent-color: var(--accent); }

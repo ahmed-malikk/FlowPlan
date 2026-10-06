@@ -18,9 +18,10 @@ export function DependencyPicker({ id, tasks, selfId, value, onChange, invalid }
   const options = tasks.filter((t) => t.id !== selfId);
   const selected = options.filter((t) => value.includes(t.id));
 
-  // Close when clicking outside or pressing Escape.
+  // Close when clicking outside or pressing Escape. "click" (not "pointerdown") so a tap on
+  // Save lands before the list closes and the form shifts on narrow screens.
   useEffect(() => {
-    function onPointer(e: PointerEvent) {
+    function onClickOutside(e: MouseEvent) {
       if (ref.current?.open && !ref.current.contains(e.target as Node)) ref.current.open = false;
     }
     function onKey(e: KeyboardEvent) {
@@ -29,10 +30,10 @@ export function DependencyPicker({ id, tasks, selfId, value, onChange, invalid }
         ref.current.querySelector("summary")?.focus();
       }
     }
-    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("click", onClickOutside);
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("click", onClickOutside);
       document.removeEventListener("keydown", onKey);
     };
   }, []);
