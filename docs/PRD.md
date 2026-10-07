@@ -66,7 +66,8 @@ The algorithm is pure functions with no React imports, so it's tested with Vites
 ## 8. Release plan
 - **v0.1 (MVP):** 2026-10-07 — stories 1–6, tests + CI, deployed on Vercel with sample plan.
 - **v1.0:** 2026-10-07 — deployed on Vercel; README with live link, screenshots, Mermaid diagrams and the gist; test plan and test report; tagged release. (Screenshot of my real 3-week plan follows in #10.)
-- **v1.1 (ideas, not scheduled):** calendar dates + weekends, export as PNG, share via URL.
+- **v1.1:** 2026-10-07 — mark tasks as done (progress only, schedule unchanged), notes on tasks, scrolling dependency lists (#14, #15, #16).
+- **Later (ideas, not scheduled):** overload warnings per owner, calendar dates + weekends, export as PNG, share via URL.
 
 ## 9. Results (fill after launch)
 <!-- Real numbers only. e.g. "Tested with 3 classmates: 3/3 named the critical path; median time 3m40s." -->

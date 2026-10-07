@@ -2,6 +2,19 @@
 
 **Author:** Ahmed Malik · **Test date:** 2026-10-07 · **Plan:** [test-plan.md](test-plan.md) · **Issue:** #12
 
+## v1.1 regression run (2026-10-07)
+
+Run after adding mark-as-done (#14), notes (#15) and scrolling dependency lists (#16), at commit `68ab2b6`, same environments as below. After deployment the same 51 system tests also passed against the live site (2.5 minutes, 0 failures).
+
+| Level | Cases | Passed | Failed |
+|---|---|---|---|
+| Unit (Vitest) | 51 (44 + 7 new: UT-10, UT-11) | 51 | 0 |
+| System, 3 environments | 17 × 3 = 51 (3 new: ST-15, ST-16, ST-17) | 51 | 0 |
+
+**Found while checking v1.1 with a real 11-task plan** (my 3-week portfolio sprint), before release, so not logged as defects: notes and the done checkbox made the Task column wider, which squeezed Start/Finish until dates wrapped word by word; the table then scrolled sideways at 1280 px; and a scrolling dependency list didn't show that it continued. Fixed in `68ab2b6` (one-line notes, dates kept on one line, wider content area, a "10 tasks · scroll" count) and checked by measuring that the table fits its box at 1280 px and 1366 px.
+
+The sections below are the original v1.0 report.
+
 ## 1. Summary
 
 | Level | Cases | Executed | Passed | Failed | Result |

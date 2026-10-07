@@ -24,6 +24,8 @@ Trello lists, WhatsApp threads and spreadsheets can't answer the question that m
 
 Plus an instant *what-if* (−/+ on any duration updates the finish date and shows the change, e.g. `+2d`), a summary panel, an example project, and print / save as PDF.
 
+**New in v1.1:** tick tasks **done** (progress bar in the summary; the schedule itself never changes), add **notes** to any task, and long "waits for" lists now scroll inside their own box so every row stays compact.
+
 | Timeline | Phone (375 px) |
 |---|---|
 | ![Gantt timeline with critical bars in red and slack as dashed boxes](docs/screenshot-timeline.png) | ![The project page on a phone](docs/screenshot-phone.png) |
@@ -126,15 +128,15 @@ Testing can't start until Backend (day 9) and Frontend (day 8) are both done, so
 
 ## Results
 
-- **Correctness:** the scheduler matches hand calculations for the worked example (every ES/EF/LS/LF/slack value), three further projects and nine edge cases: **44 / 44 unit tests**.
-- **System tests:** 14 user journeys in desktop Edge, desktop Chrome and a 375 px phone view: **42 / 42 pass on the local production build and 42 / 42 on the live Vercel site** (2026-10-07).
+- **Correctness:** the scheduler matches hand calculations for the worked example (every ES/EF/LS/LF/slack value), three further projects and nine edge cases, plus the v1.1 done and notes rules: **51 / 51 unit tests**.
+- **System tests:** 17 user journeys in desktop Edge, desktop Chrome and a 375 px phone view: **51 / 51 pass on the local production build and 51 / 51 on the live Vercel site** (v1.1, 2026-10-07).
 - **Bugs found and fixed:** testing found 2 phone-only layout defects ([#11](https://github.com/ahmed-malikk/FlowPlan/issues/11), [#13](https://github.com/ahmed-malikk/FlowPlan/issues/13)); both are fixed and covered by tests.
 - **Still to measure:** usability with 3 first-time users (target: a 6-task plan in under 5 minutes) and my own 3-week plan in FlowPlan. Results will be added here when they're real.
 
 ## What I'd do next
 
-- **v1.1:** assign owners and warn when one person has overlapping tasks
-- **v1.2:** working calendar that skips weekends and holidays
+- **v1.2:** warn when one person has overlapping tasks (my own sprint plan showed why: by dependencies alone it's 12 days, but as one person it's 21)
+- **v1.3:** working calendar that skips weekends and holidays
 - **v2.0:** accounts and a shareable read-only link for clients (Supabase)
 - **v2.1:** track actual vs planned progress and flag tasks that are eating their slack
 - Run the Playwright tests in CI, and add Safari/Firefox
@@ -163,6 +165,6 @@ src/lib/scheduler.ts           graph, cycle check, CPM (the key file)
 src/lib/plan.ts                validation, safe edits, day → date conversion
 src/lib/storage.ts             save/load in localStorage
 src/lib/*.test.ts              Vitest unit tests
-e2e/flowplan.spec.ts           Playwright system tests (ST-01 … ST-14)
+e2e/flowplan.spec.ts           Playwright system tests (ST-01 … ST-17)
 docs/                          PRD, test plan, test report, screenshots
 ```

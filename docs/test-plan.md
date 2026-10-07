@@ -1,6 +1,6 @@
 # Test Plan: FlowPlan v1.0
 
-**Author:** Ahmed Malik · **Date:** 2026-10-07 · **Version:** 1.0 · **Status:** Approved for execution
+**Author:** Ahmed Malik · **Date:** 2026-10-07 · **Version:** 1.1 (adds done, notes, long dependency lists) · **Status:** Approved for execution
 **Related:** [PRD](PRD.md) · [Test report](test-report.md) · Issue #12
 
 ## 1. Purpose
@@ -60,7 +60,7 @@ The system under test is the **production build** (`next build` + `next start`),
 
 ## 6. Unit test cases
 
-All in `src/lib/scheduler.test.ts` and `src/lib/plan.test.ts` (44 tests).
+All in `src/lib/scheduler.test.ts` and `src/lib/plan.test.ts` (51 tests).
 
 | ID | Area | Cases | Expected |
 |---|---|---|---|
@@ -73,6 +73,8 @@ All in `src/lib/scheduler.test.ts` and `src/lib/plan.test.ts` (44 tests).
 | UT-07 | Edits and what-if | 3 | Delete removes the task from dependents; duration change updates the schedule; never below 1 day |
 | UT-08 | Dates and example | 4 | Day → date conversion; 1-day task on day 0; example project equals the worked example |
 | UT-09 | Persistence | 3 | Save/load round trip; empty or corrupt storage; malformed tasks dropped |
+| UT-10 | Mark as done (v1.1) | 4 | Only the chosen task changes and can be unmarked; the schedule never changes; editing keeps done; done survives a reload, anything but `true` ignored |
+| UT-11 | Notes (v1.1) | 3 | Trimmed and kept, empty dropped; over 500 characters rejected; survive a reload, non-text ignored |
 
 ## 7. System test cases
 
@@ -94,6 +96,9 @@ Automated in `e2e/flowplan.spec.ts`; each runs on ENV-1, ENV-2 and ENV-3.
 | ST-12 | Edge: corrupt storage | Put invalid JSON in storage; reload | Home shows "No projects yet" without crashing; app still works |
 | ST-13 | Projects | Delete the project and accept | Back on home; project gone |
 | ST-14 | Responsive (NFR-03) | Measure page width on home, Tasks tab and Timeline tab | Page is never wider than the screen |
+| ST-15 | Long dependency lists (v1.1, #16) | Open a plan where one task waits for 10 others | That row stays within 30 px of a normal row; all 10 chips are in a box that scrolls |
+| ST-16 | Mark as done (v1.1, #14) | Tick 2 tasks; reload; untick 1; open Timeline | Rows marked done; "2 of 7 done", then "1 of 7 done"; still 12 days and still critical; 1 faded bar |
+| ST-17 | Notes (v1.1, #15) | Add a task with a note; edit the note; reload | Note shows under the task name; edit form is pre-filled; edited note survives the reload |
 
 ## 8. Usability test (manual)
 
@@ -128,6 +133,9 @@ Automated in `e2e/flowplan.spec.ts`; each runs on ENV-1, ENV-2 and ENV-3.
 | Projects (create/delete) | – | ST-01, ST-13 |
 | Edge-case table (product guide §9) | UT-03, UT-05, UT-07 | ST-02, ST-04, ST-05, ST-06, ST-10 |
 | NFR-03 usable at 375 px | – | ST-14 on ENV-3 |
+| v1.1: mark as done (#14) | UT-10 | ST-16 |
+| v1.1: notes (#15) | UT-11 | ST-17 |
+| v1.1: long dependency lists (#16) | – | ST-15 |
 | NFR-02 usability | – | Section 8 (manual) |
 
 ## 10. Roles and schedule
