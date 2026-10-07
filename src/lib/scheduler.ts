@@ -19,6 +19,7 @@ export type Task = {
   dependsOn: string[]; // ids of tasks that must finish first
   owner?: string;
   done?: boolean; // progress marker only: the schedule is always computed from the plan
+  notes?: string;
 };
 
 export type Project = {

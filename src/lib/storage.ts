@@ -4,6 +4,7 @@
  * Shaped as a tiny store (subscribe + getSnapshot) so React can read it with
  * useSyncExternalStore, and edits in one tab show up in other open tabs.
  */
+import { MAX_NOTES } from "./plan";
 import type { Project, Task } from "./scheduler";
 
 export const STORAGE_KEY = "flowplan:projects:v1";
@@ -34,6 +35,7 @@ function parseTask(t: unknown): Task[] {
   const task: Task = { id: t.id, name: t.name, duration, dependsOn };
   if (typeof t.owner === "string" && t.owner) task.owner = t.owner;
   if (t.done === true) task.done = true;
+  if (typeof t.notes === "string" && t.notes.trim()) task.notes = t.notes.trim().slice(0, MAX_NOTES);
   return [task];
 }
 

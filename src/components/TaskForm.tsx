@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { validateTask, type TaskErrors, type TaskInput } from "@/lib/plan";
+import { MAX_NOTES, validateTask, type TaskErrors, type TaskInput } from "@/lib/plan";
 import type { Task } from "@/lib/scheduler";
 import { DependencyPicker } from "./DependencyPicker";
 
@@ -20,6 +20,7 @@ function toInput(task?: Task): TaskInput {
     duration: task ? String(task.duration) : "",
     owner: task?.owner ?? "",
     dependsOn: task?.dependsOn ?? [],
+    notes: task?.notes ?? "",
   };
 }
 
@@ -118,6 +119,21 @@ export function TaskForm({ tasks, initial, onSave, onCancel, nameInputId, autoFo
             {errors.dependsOn}
           </span>
         )}
+      </div>
+
+      <div className="field field-notes">
+        <label htmlFor={`${uid}-notes`}>Notes (optional)</label>
+        <textarea
+          id={`${uid}-notes`}
+          className="input"
+          rows={2}
+          maxLength={MAX_NOTES}
+          placeholder="Links, decisions, blockers…"
+          value={input.notes}
+          aria-invalid={!!errors.notes}
+          onChange={(e) => set("notes", e.target.value)}
+        />
+        {errors.notes && <span className="field-error">{errors.notes}</span>}
       </div>
 
       <div className="form-actions">

@@ -265,3 +265,22 @@ test("ST-16 marking tasks done shows progress, survives a reload and keeps the s
   await page.getByRole("tab", { name: "Timeline" }).click();
   await expect(page.locator(".gantt-bar.is-done")).toHaveCount(1);
 });
+
+test("ST-17 a note can be added, edited, and survives a reload", async ({ page }) => {
+  await createProject(page, "Notes");
+  const form = addForm(page);
+  await form.getByLabel("Task").fill("Backend");
+  await form.getByLabel("Days").fill("4");
+  await form.getByLabel("Notes (optional)").fill("Use the API spec from Sara");
+  await form.getByRole("button", { name: "Add task" }).click();
+  await expect(row(page, "Backend").locator(".task-note")).toHaveText("Use the API spec from Sara");
+
+  await row(page, "Backend").getByRole("button", { name: "Edit" }).click();
+  const editRow = page.locator("tr.editing-row");
+  await expect(editRow.getByLabel("Notes (optional)")).toHaveValue("Use the API spec from Sara");
+  await editRow.getByLabel("Notes (optional)").fill("Spec approved on Monday");
+  await editRow.getByRole("button", { name: "Save" }).click();
+
+  await page.reload();
+  await expect(row(page, "Backend").locator(".task-note")).toHaveText("Spec approved on Monday");
+});

@@ -4,10 +4,11 @@
  */
 import { describeCycle, topologicalSort, type Project, type Task } from "./scheduler";
 
-export type TaskInput = { name: string; duration: string; owner: string; dependsOn: string[] };
-export type TaskErrors = { name?: string; duration?: string; dependsOn?: string };
+export type TaskInput = { name: string; duration: string; owner: string; dependsOn: string[]; notes: string };
+export type TaskErrors = { name?: string; duration?: string; dependsOn?: string; notes?: string };
 
 export const MAX_DURATION = 999;
+export const MAX_NOTES = 500;
 
 export function newId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
@@ -43,6 +44,9 @@ export function validateTask(
   const task: Task = { id, name, duration: Number(durationText), dependsOn };
   const owner = input.owner.trim();
   if (owner) task.owner = owner;
+  const notes = input.notes.trim();
+  if (notes.length > MAX_NOTES) errors.notes = `Notes can be at most ${MAX_NOTES} characters.`;
+  else if (notes) task.notes = notes;
   // Editing a task must not lose its progress.
   if (tasks.find((t) => t.id === id)?.done) task.done = true;
 

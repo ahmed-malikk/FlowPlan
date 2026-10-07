@@ -19,7 +19,7 @@ function t(id: string, duration: number, ...dependsOn: string[]): Task {
 }
 
 function input(over: Partial<TaskInput> = {}): TaskInput {
-  return { name: "Design", duration: "2", owner: "", dependsOn: [], ...over };
+  return { name: "Design", duration: "2", owner: "", dependsOn: [], notes: "", ...over };
 }
 
 describe("validateTask (story 1: add tasks with a duration)", () => {
@@ -195,5 +195,29 @@ describe("setDone (mark tasks as done)", () => {
     const [a, b] = parseProjects(raw)[0].tasks;
     expect(a.done).toBe(true);
     expect(b.done).toBeUndefined();
+  });
+});
+
+describe("notes on tasks", () => {
+  it("are trimmed and kept; empty notes are dropped", () => {
+    const r = validateTask(input({ notes: "  Check the API spec  " }), []);
+    expect(r.ok && r.task.notes).toBe("Check the API spec");
+    const empty = validateTask(input({ notes: "   " }), []);
+    expect(empty.ok && "notes" in empty.task).toBe(false);
+  });
+
+  it("over 500 characters are rejected", () => {
+    const r = validateTask(input({ notes: "x".repeat(501) }), []);
+    expect(r.ok).toBe(false);
+    expect(!r.ok && r.errors.notes).toBe("Notes can be at most 500 characters.");
+  });
+
+  it("survive a reload; non-text notes are ignored", () => {
+    const raw = JSON.stringify([
+      { id: "p", name: "P", startDate: "2026-10-06", tasks: [{ ...t("A", 1), notes: "Ask Sara" }, { ...t("B", 1), notes: 42 }] },
+    ]);
+    const [a, b] = parseProjects(raw)[0].tasks;
+    expect(a.notes).toBe("Ask Sara");
+    expect(b.notes).toBeUndefined();
   });
 });
