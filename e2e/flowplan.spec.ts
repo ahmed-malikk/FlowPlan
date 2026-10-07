@@ -219,3 +219,28 @@ test("ST-14 no page is wider than the screen", async ({ page }) => {
   await expect(page.locator(".gantt")).toBeVisible();
   await expectNoSideways(page);
 });
+
+/** Saves a project straight into browser storage and opens it (faster than typing many tasks). */
+async function seedProject(page: Page, project: object) {
+  await page.goto("/");
+  await page.evaluate(([key, p]) => localStorage.setItem(key as string, JSON.stringify([p])), [STORAGE_KEY, project]);
+  await page.goto(`/project/${(project as { id: string }).id}`);
+  await expect(page.locator("table.tasks")).toBeVisible();
+}
+
+test("ST-15 a task with many dependencies keeps a compact row; the list scrolls", async ({ page }) => {
+  const deps = Array.from({ length: 10 }, (_, i) => ({ id: `t${i}`, name: `Project number ${i + 1}`, duration: 1, dependsOn: [] }));
+  const last = { id: "last", name: "Portfolio Site", duration: 1, dependsOn: deps.map((d) => d.id) };
+  await seedProject(page, { id: "many", name: "Many deps", startDate: "2026-10-07", tasks: [...deps, last] });
+
+  const lastRow = row(page, "Portfolio Site");
+  const firstRow = row(page, "Project number 1");
+  const lastHeight = (await lastRow.boundingBox())!.height;
+  const firstHeight = (await firstRow.boundingBox())!.height;
+  expect(lastHeight, "row with 10 dependencies stays close to a normal row").toBeLessThan(firstHeight + 30);
+
+  const list = lastRow.locator(".chips-scroll");
+  await expect(list.locator(".chip")).toHaveCount(10);
+  const { scroll, client } = await list.evaluate((el) => ({ scroll: el.scrollHeight, client: el.clientHeight }));
+  expect(scroll, "the list scrolls inside its own box").toBeGreaterThan(client);
+});

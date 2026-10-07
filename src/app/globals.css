@@ -171,6 +171,9 @@ tr.is-critical .task-name { color: var(--critical); }
 
 .chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); font-size: 12px; font-weight: 500; white-space: nowrap; }
 .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+/* Long dependency lists scroll inside their own box, so a row's height follows the task name, not the number of dependencies. */
+.chips-scroll { max-height: 52px; max-width: 240px; overflow-y: auto; align-content: flex-start; overscroll-behavior: contain; scrollbar-width: thin; }
+.picker summary .chips-scroll { max-width: none; }
 .badge-critical { background: var(--critical-soft); color: var(--critical); font-weight: 700; }
 .badge-slack { background: var(--accent-soft); color: var(--slack); }
 
@@ -230,6 +233,7 @@ tr.is-critical .task-name { color: var(--critical); }
   body { background: #fff; }
   .card { box-shadow: none; }
   .layout { grid-template-columns: 1fr; }
+  .chips-scroll { max-height: none; overflow: visible; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

@@ -48,7 +48,7 @@ export function DependencyPicker({ id, tasks, selfId, value, onChange, invalid }
         {selected.length === 0 ? (
           <span className="muted">Nothing (can start on day 0)</span>
         ) : (
-          <span className="chips">
+          <span className="chips chips-scroll">
             {selected.map((t) => (
               <span key={t.id} className="chip">
                 {t.name}

@@ -96,7 +96,7 @@ export function TaskTable({ tasks, scheduled, startDate, onSave, onDelete, onDur
                   {task.dependsOn.length === 0 ? (
                     <span className="muted">—</span>
                   ) : (
-                    <span className="chips">
+                    <span className="chips chips-scroll">
                       {task.dependsOn.map((d) => (
                         <span key={d} className="chip">
                           {names.get(d) ?? "deleted task"}
