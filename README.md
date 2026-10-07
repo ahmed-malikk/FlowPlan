@@ -131,7 +131,12 @@ Testing can't start until Backend (day 9) and Frontend (day 8) are both done, so
 - **Correctness:** the scheduler matches hand calculations for the worked example (every ES/EF/LS/LF/slack value), three further projects and nine edge cases, plus the v1.1 done and notes rules: **51 / 51 unit tests**.
 - **System tests:** 17 user journeys in desktop Edge, desktop Chrome and a 375 px phone view: **51 / 51 pass on the local production build and 51 / 51 on the live Vercel site** (v1.1, 2026-10-07).
 - **Bugs found and fixed:** testing found 2 phone-only layout defects ([#11](https://github.com/ahmed-malikk/FlowPlan/issues/11), [#13](https://github.com/ahmed-malikk/FlowPlan/issues/13)); both are fixed and covered by tests.
-- **Still to measure:** usability with 3 first-time users (target: a 6-task plan in under 5 minutes) and my own 3-week plan in FlowPlan. Results will be added here when they're real.
+- **Real use, user #1 is me:** I planned my own 3-week, 11-item portfolio sprint in FlowPlan ([#10](https://github.com/ahmed-malikk/FlowPlan/issues/10)). It finishes **Mon 26 Oct 2026, day 21**, exactly matching my hand calculation, with **all 11 items critical**. Planned with dependencies alone, the same work takes **12 days**. The 9-day gap is caused by one person doing everything, not by dependencies. So any slip moves my deadline, my single buffer day matters, and per-person overload warnings are the most useful next feature.
+- **Still to measure:** usability with 3 first-time users (target: a 6-task plan in under 5 minutes). Results will be added here when they're real.
+
+| My sprint: every item is critical | Timeline: one unbroken critical chain |
+|---|---|
+| ![My 3-week portfolio sprint in FlowPlan: 21 days, 11 of 11 critical, 1 done](docs/my-sprint-tasks.png) | ![Timeline of the sprint: a single chain of red bars from day 0 to day 21](docs/my-sprint-timeline.png) |
 
 ## What I'd do next
 

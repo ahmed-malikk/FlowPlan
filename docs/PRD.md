@@ -75,5 +75,5 @@ The algorithm is pure functions with no React imports, so it's tested with Vites
 - **Quality (met):** 44 / 44 unit tests pass in CI on every push; the scheduler matches the hand-calculated worked example exactly, plus 3 more projects and 9 edge cases.
 - **System tests:** 14 user journeys × 3 environments (desktop Edge, desktop Chrome, 375 px phone): 42 / 42 on the local production build and 42 / 42 on the live site. See [test report](test-report.md).
 - **Defects:** testing found 2 phone-only layout bugs (#11, #13); both fixed before release.
-- **Primary metric (own 3-week plan):** not yet done, tracked in #10.
+- **Primary metric (own 3-week plan): met.** My 3-week portfolio sprint is planned in FlowPlan (#10): 11 items, finish Mon 26 Oct 2026 (day 21), all 11 critical, which matches my hand calculation. Insight: with dependencies alone it would take 12 days; the extra 9 days come from one person doing all the work, which makes per-owner overload warnings the top next feature.
 - **Secondary metric (3 hallway testers):** not yet run; protocol in [test plan §8](test-plan.md#8-usability-test-manual).
