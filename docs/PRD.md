@@ -1,6 +1,6 @@
 # PRD: FlowPlan
 
-**Author:** Ahmed Malik · **Date:** 2026-10-06 · **Status:** Shipped (v1.0, 2026-10-07) · **Live:** https://flow-plan-five.vercel.app/
+**Author:** Ahmed Malik · **Date:** 2026-10-06 · **Status:** Shipped (v1.1, 2026-10-07) · **Live:** https://flow-plan-five.vercel.app/
 
 ## 1. Problem
 Small teams (student groups, 2–5 person startups, freelancers juggling a client project) plan work in WhatsApp threads, sticky notes or a flat to-do list. A flat list doesn't show which tasks are *blocking* others, so when one slips nobody knows whether the deadline is now at risk until it's too late. Heavy tools like MS Project or Jira Advanced Roadmaps solve this but are expensive, slow to learn, and overkill for a 3-week plan.
