@@ -4,7 +4,7 @@
 
 [![Tests](https://github.com/ahmed-malikk/FlowPlan/actions/workflows/test.yml/badge.svg)](https://github.com/ahmed-malikk/FlowPlan/actions/workflows/test.yml)
 
-**Live:** [flow-plan-five.vercel.app](https://flow-plan-five.vercel.app/) · **PRD:** [docs/PRD.md](docs/PRD.md) · **Tests:** [plan](docs/test-plan.md) · [report](docs/test-report.md) · **Board:** [issues](https://github.com/ahmed-malikk/FlowPlan/issues?q=is%3Aissue)
+**Live:** [flow-plan-five.vercel.app](https://flow-plan-five.vercel.app/) · **PRD:** [docs/PRD.md](docs/PRD.md) · **Tests:** [plan](docs/test-plan.md) · [report](docs/test-report.md) · **Lessons:** [lessons learned](docs/lessons-learned.md) · **Board:** [issues](https://github.com/ahmed-malikk/FlowPlan/issues?q=is%3Aissue)
 
 ![FlowPlan showing the example project: critical tasks in red, slack in green, summary with the finish date](docs/screenshot.png)
 
