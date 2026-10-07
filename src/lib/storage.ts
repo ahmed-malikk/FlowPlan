@@ -33,6 +33,7 @@ function parseTask(t: unknown): Task[] {
   const dependsOn = Array.isArray(t.dependsOn) ? t.dependsOn.filter((d): d is string => typeof d === "string") : [];
   const task: Task = { id: t.id, name: t.name, duration, dependsOn };
   if (typeof t.owner === "string" && t.owner) task.owner = t.owner;
+  if (t.done === true) task.done = true;
   return [task];
 }
 

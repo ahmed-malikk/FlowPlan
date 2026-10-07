@@ -25,6 +25,7 @@ export function SummaryPanel({ result, startDate, taskCount, baselineFinish }: P
 
   const { finish, tasks } = result;
   const critical = tasks.filter((t) => t.critical);
+  const doneCount = tasks.filter((t) => t.done).length;
   const delta = baselineFinish === null ? 0 : finish - baselineFinish;
   // Arrows only make sense when the critical tasks form one chain (not two parallel critical paths).
   const isChain = critical.every((t, i) => i === 0 || t.dependsOn.includes(critical[i - 1].id));
@@ -60,6 +61,25 @@ export function SummaryPanel({ result, startDate, taskCount, baselineFinish }: P
           )}
         </div>
       </div>
+
+      {taskCount > 0 && (
+        <div className="stat">
+          <div className="stat-label">Progress</div>
+          <div className="stat-value num">
+            {doneCount} <span className="stat-sub">of {taskCount} done</span>
+          </div>
+          <div
+            className="progress"
+            role="progressbar"
+            aria-label="Tasks done"
+            aria-valuemin={0}
+            aria-valuemax={taskCount}
+            aria-valuenow={doneCount}
+          >
+            <span style={{ width: `${(doneCount / taskCount) * 100}%` }} />
+          </div>
+        </div>
+      )}
 
       <div className="stat">
         <div className="stat-label">Critical tasks</div>

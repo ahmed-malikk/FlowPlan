@@ -5,6 +5,7 @@ import {
   endDateOf,
   exampleProject,
   removeTask,
+  setDone,
   setDuration,
   startDateOf,
   validateTask,
@@ -160,5 +161,39 @@ describe("parseProjects (story 5: plans survive a reload)", () => {
       },
     ]);
     expect(parseProjects(raw)[0].tasks.map((x) => x.id)).toEqual(["a"]);
+  });
+});
+
+describe("setDone (mark tasks as done)", () => {
+  const tasks = [t("A", 2), t("B", 3, "A")];
+
+  it("marks only the chosen task, and can unmark it", () => {
+    const done = setDone(tasks, "A", true);
+    expect(done.find((x) => x.id === "A")?.done).toBe(true);
+    expect(done.find((x) => x.id === "B")?.done).toBeUndefined();
+    expect(setDone(done, "A", false).find((x) => x.id === "A")).toEqual(t("A", 2));
+  });
+
+  it("never changes the schedule", () => {
+    const before = schedule({ tasks });
+    const after = schedule({ tasks: setDone(tasks, "A", true) });
+    if (!before.ok || !after.ok) throw new Error("unexpected loop");
+    expect(after.finish).toBe(before.finish);
+    expect(after.tasks.map((x) => [x.es, x.slack])).toEqual(before.tasks.map((x) => [x.es, x.slack]));
+  });
+
+  it("editing a done task keeps it done", () => {
+    const tasksWithDone = setDone(tasks, "A", true);
+    const r = validateTask(input({ name: "A renamed" }), tasksWithDone, "A");
+    expect(r.ok && r.task.done).toBe(true);
+  });
+
+  it("survives a reload; anything but true is ignored", () => {
+    const raw = JSON.stringify([
+      { id: "p", name: "P", startDate: "2026-10-06", tasks: [{ ...t("A", 1), done: true }, { ...t("B", 1), done: "yes" }] },
+    ]);
+    const [a, b] = parseProjects(raw)[0].tasks;
+    expect(a.done).toBe(true);
+    expect(b.done).toBeUndefined();
   });
 });

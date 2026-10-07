@@ -244,3 +244,24 @@ test("ST-15 a task with many dependencies keeps a compact row; the list scrolls"
   const { scroll, client } = await list.evaluate((el) => ({ scroll: el.scrollHeight, client: el.clientHeight }));
   expect(scroll, "the list scrolls inside its own box").toBeGreaterThan(client);
 });
+
+test("ST-16 marking tasks done shows progress, survives a reload and keeps the schedule", async ({ page }) => {
+  await openExample(page);
+  await page.getByRole("checkbox", { name: "Mark Requirements as done" }).check();
+  await page.getByRole("checkbox", { name: "Mark UI design as done" }).check();
+
+  await expect(row(page, "Requirements")).toHaveClass(/is-done/);
+  await expect(summary(page)).toContainText("2 of 7 done");
+  await expect(summary(page)).toContainText("12 days"); // progress never moves the schedule
+  await expect(row(page, "Requirements")).toHaveClass(/is-critical/);
+
+  await page.reload();
+  await expect(page.getByRole("checkbox", { name: "Mark Requirements as done" })).toBeChecked();
+  await expect(summary(page)).toContainText("2 of 7 done");
+
+  await page.getByRole("checkbox", { name: "Mark UI design as done" }).uncheck();
+  await expect(summary(page)).toContainText("1 of 7 done");
+
+  await page.getByRole("tab", { name: "Timeline" }).click();
+  await expect(page.locator(".gantt-bar.is-done")).toHaveCount(1);
+});

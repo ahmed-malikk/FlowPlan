@@ -7,7 +7,7 @@ import { Gantt } from "@/components/Gantt";
 import { SummaryPanel } from "@/components/SummaryPanel";
 import { TaskForm } from "@/components/TaskForm";
 import { TaskTable } from "@/components/TaskTable";
-import { endDateOf, formatDate, isIsoDate, removeTask, setDuration, upsertTask } from "@/lib/plan";
+import { endDateOf, formatDate, isIsoDate, removeTask, setDone, setDuration, upsertTask } from "@/lib/plan";
 import { schedule, type Project, type Task } from "@/lib/scheduler";
 import { deleteProject, updateProject } from "@/lib/storage";
 import { useProjects } from "@/lib/useProjects";
@@ -143,6 +143,7 @@ function ProjectView({ project }: { project: Project }) {
                   onSave={(task) => setTasks((ts) => upsertTask(ts, task))}
                   onDelete={(taskId) => setTasks((ts) => removeTask(ts, taskId))}
                   onDuration={(taskId, d) => setTasks((ts) => setDuration(ts, taskId, d))}
+                  onDone={(taskId, done) => setTasks((ts) => setDone(ts, taskId, done))}
                 />
               ) : (
                 <EmptyState onAdd={focusAddTask} />

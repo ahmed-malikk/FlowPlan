@@ -18,6 +18,7 @@ export type Task = {
   duration: number; // whole working days, ≥ 1
   dependsOn: string[]; // ids of tasks that must finish first
   owner?: string;
+  done?: boolean; // progress marker only: the schedule is always computed from the plan
 };
 
 export type Project = {

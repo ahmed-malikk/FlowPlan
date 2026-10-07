@@ -165,6 +165,13 @@ table.tasks td { padding: 8px; border-bottom: 1px solid var(--border); vertical-
 table.tasks tr:last-child td { border-bottom: 0; }
 table.tasks tr.is-critical td:first-child { box-shadow: inset 3px 0 0 var(--critical); }
 .task-name { font-weight: 600; }
+.task-cell { display: flex; gap: 8px; align-items: flex-start; }
+.done-check { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--slack); cursor: pointer; flex-shrink: 0; }
+tr.is-done .task-name { text-decoration: line-through; color: var(--muted); }
+tr.is-done td { opacity: 0.75; }
+.gantt-bar.is-done { opacity: 0.45; }
+.progress { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
+.progress > span { display: block; height: 100%; background: var(--slack); border-radius: inherit; transition: width 0.2s; }
 tr.is-critical .task-name { color: var(--critical); }
 .actions { white-space: nowrap; text-align: right; }
 .editing-row td { background: var(--surface-2); }

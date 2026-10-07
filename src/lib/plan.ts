@@ -43,6 +43,8 @@ export function validateTask(
   const task: Task = { id, name, duration: Number(durationText), dependsOn };
   const owner = input.owner.trim();
   if (owner) task.owner = owner;
+  // Editing a task must not lose its progress.
+  if (tasks.find((t) => t.id === id)?.done) task.done = true;
 
   if (!errors.dependsOn) {
     const next = upsertTask(tasks, task);
@@ -78,6 +80,15 @@ export function dependentsOf(tasks: Task[], id: string): Task[] {
 export function setDuration(tasks: Task[], id: string, duration: number): Task[] {
   const clamped = Math.min(MAX_DURATION, Math.max(1, Math.round(duration)));
   return tasks.map((t) => (t.id === id ? { ...t, duration: clamped } : t));
+}
+
+/** Marks one task done or not done. Progress never changes the schedule. */
+export function setDone(tasks: Task[], id: string, done: boolean): Task[] {
+  return tasks.map((t) => {
+    if (t.id !== id) return t;
+    const { done: _previous, ...rest } = t;
+    return done ? { ...rest, done: true } : rest;
+  });
 }
 
 // ---- Dates: days are numbers internally and only become dates for display. ----

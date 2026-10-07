@@ -12,9 +12,10 @@ type Props = {
   onSave: (task: Task) => void;
   onDelete: (id: string) => void;
   onDuration: (id: string, duration: number) => void;
+  onDone: (id: string, done: boolean) => void;
 };
 
-export function TaskTable({ tasks, scheduled, startDate, onSave, onDelete, onDuration }: Props) {
+export function TaskTable({ tasks, scheduled, startDate, onSave, onDelete, onDuration, onDone }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const names = new Map(tasks.map((t) => [t.id, t.name]));
 
@@ -66,10 +67,24 @@ export function TaskTable({ tasks, scheduled, startDate, onSave, onDelete, onDur
             }
             const s = scheduled?.get(task.id);
             return (
-              <tr key={task.id} className={s?.critical ? "is-critical" : undefined}>
+              <tr
+                key={task.id}
+                className={[s?.critical && "is-critical", task.done && "is-done"].filter(Boolean).join(" ") || undefined}
+              >
                 <td>
-                  <div className="task-name">{task.name}</div>
-                  {task.owner && <div className="small muted">{task.owner}</div>}
+                  <div className="task-cell">
+                    <input
+                      type="checkbox"
+                      className="done-check"
+                      aria-label={`Mark ${task.name} as done`}
+                      checked={!!task.done}
+                      onChange={(e) => onDone(task.id, e.target.checked)}
+                    />
+                    <div>
+                      <div className="task-name">{task.name}</div>
+                      {task.owner && <div className="small muted">{task.owner}</div>}
+                    </div>
+                  </div>
                 </td>
                 <td>
                   <div className="stepper" title="Change the duration to see the effect on the finish date">

@@ -58,14 +58,14 @@ export function Gantt({ tasks, finish, startDate }: Props) {
               <div className="gantt-track">
                 {grid}
                 <div
-                  className={`gantt-bar${t.critical ? " is-critical" : ""}`}
+                  className={`gantt-bar${t.critical ? " is-critical" : ""}${t.done ? " is-done" : ""}`}
                   style={{ left: pct(t.es), width: pct(t.duration) }}
                   title={`${t.name}: ${formatDate(startDateOf(startDate, t.es), false)} – ${formatDate(
                     endDateOf(startDate, t.ef),
                     false,
-                  )} (day ${t.es}–${t.ef}, ${t.duration}d)${t.critical ? " · critical" : ` · ${t.slack}d slack`}`}
+                  )} (day ${t.es}–${t.ef}, ${t.duration}d)${t.critical ? " · critical" : ` · ${t.slack}d slack`}${t.done ? " · done" : ""}`}
                 >
-                  <span className="gantt-bar-text">{t.duration}d</span>
+                  <span className="gantt-bar-text">{t.done ? "✓ " : ""}{t.duration}d</span>
                 </div>
                 {t.slack > 0 && (
                   <div
