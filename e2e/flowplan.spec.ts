@@ -458,6 +458,7 @@ test("ST-32 resting the pointer on a task's edge does not make the diagram flick
 // hides scrollbars and cannot zoom per test, so this test starts its own browser with those flags.
 test("ST-33 the diagram settles and stays still at 80% browser zoom with classic scrollbars", async ({ browserName }, info) => {
   test.skip(info.project.name === "phone-375", "the phone has no classic scrollbars or zoom");
+  test.setTimeout(90_000); // it starts its own browser, which is slow when other tests are running
   const channel = info.project.name === "desktop-chrome" ? "chrome" : "msedge";
   const browser = await chromium.launch({
     channel,
@@ -485,6 +486,39 @@ test("ST-33 the diagram settles and stays still at 80% browser zoom with classic
   } finally {
     await browser.close();
   }
+});
+
+test("ST-34 scrollbars are slim and themed (a gradient thumb), on the page and in scrolling areas", async ({ page }) => {
+  await openExample(page);
+  const look = await page.evaluate(() => {
+    const read = (el: Element) => {
+      const c = getComputedStyle(el, "::-webkit-scrollbar");
+      const t = getComputedStyle(el, "::-webkit-scrollbar-thumb");
+      return { width: c.width, thumb: t.backgroundImage };
+    };
+    return { page: read(document.documentElement), list: read(document.querySelector("#tasks-card")!) };
+  });
+  for (const v of [look.page, look.list]) {
+    expect(v.width).toBe("12px");
+    expect(v.thumb).toContain("linear-gradient");
+  }
+});
+
+test("ST-35 touch screens get a route-thread scroll marker that fades out; mouse screens do not", async ({ page }) => {
+  await openExample(page);
+  const marker = page.locator("[data-scroll-indicator]");
+  if (!isNarrow(page)) {
+    await expect(marker).toBeHidden(); // desktop keeps the styled scrollbar
+    return;
+  }
+  await expect(marker).toHaveCSS("opacity", "0"); // quiet until the page scrolls
+  await page.evaluate(() => window.scrollTo(0, 400));
+  await expect(marker).toHaveCSS("opacity", "1");
+  const dot = marker.locator("div").nth(2);
+  const first = await dot.evaluate((el) => el.style.transform);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => dot.evaluate((el) => el.style.transform)).not.toBe(first); // the station dot follows the page
+  await expect(marker).toHaveCSS("opacity", "0", { timeout: 4000 }); // and fades when the scrolling stops
 });
 
 test("ST-25 the tab bar and the Tasks | Diagram switch exist on a phone only", async ({ page }) => {
