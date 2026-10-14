@@ -86,6 +86,9 @@ function ProjectView({ project }: { project: Project }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only on arrival, not whenever tasks change
   }, []);
 
+  const startWithExample = () => setTasks(() => exampleProject().tasks);
+  const focusQuickAdd = () => document.getElementById(QUICK_ADD_INPUT)?.focus();
+
   /** Deleting a task is never final: the toast offers Undo and restores the whole task list. */
   function removeTaskWithUndo(taskId: string) {
     const before = project.tasks;
@@ -159,7 +162,15 @@ function ProjectView({ project }: { project: Project }) {
               onDelete={removeTaskWithUndo}
             />
           ) : (
-            <p className="mt-3 text-muted-foreground">Tasks you add appear here with what they wait for and how much slack they have.</p>
+            <>
+              <p className="mt-3 text-muted-foreground max-[900px]:hidden">
+                Tasks you add appear here with what they wait for and how much slack they have.
+              </p>
+              {/* On a phone the Tasks card is the first thing a blank plan shows, so the empty state lives here too. */}
+              <div className="flex min-[901px]:hidden">
+                <EmptyPlan onExample={startWithExample} onFirstTask={focusQuickAdd} />
+              </div>
+            </>
           )}
         </section>
 
@@ -169,10 +180,7 @@ function ProjectView({ project }: { project: Project }) {
           className={cn(CARD, "flex flex-col overflow-hidden print:hidden", view === "tasks" && "max-[900px]:hidden")}
         >
           {!hasTasks ? (
-            <EmptyPlan
-              onExample={() => setTasks(() => exampleProject().tasks)}
-              onFirstTask={() => document.getElementById(QUICK_ADD_INPUT)?.focus()}
-            />
+            <EmptyPlan onExample={startWithExample} onFirstTask={focusQuickAdd} />
           ) : result.ok ? (
             <>
             <FlowDiagram

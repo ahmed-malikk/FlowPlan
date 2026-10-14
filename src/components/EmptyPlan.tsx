@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -6,12 +7,14 @@ import { Button } from "@/components/ui/button";
  * or your own first task.
  */
 export function EmptyPlan({ onExample, onFirstTask }: { onExample: () => void; onFirstTask: () => void }) {
+  // This component can be on the page twice (Tasks and Diagram on a phone), so its arrow marker needs its own id.
+  const arrow = `fp-ghost-arrow-${useId().replace(/:/g, "")}`;
   return (
     <div className="grid min-h-[300px] flex-1 place-items-center px-4 py-8">
       <div className="fp-enter grid max-w-[460px] justify-items-center gap-2.5 text-center">
         <svg viewBox="0 0 360 150" aria-hidden="true" className="h-auto w-[min(360px,100%)]">
           <defs>
-            <marker id="fp-ghost-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <marker id={arrow} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
               <path d="M0 1L9 5L0 9z" fill="var(--primary)" />
             </marker>
           </defs>
@@ -22,8 +25,8 @@ export function EmptyPlan({ onExample, onFirstTask }: { onExample: () => void; o
             <rect x="138" y="102" width="86" height="40" rx="10" stroke="var(--line-strong)" />
           </g>
           <g fill="none" strokeLinecap="round">
-            <path d="M94 65H136" stroke="var(--primary)" strokeWidth="3" markerEnd="url(#fp-ghost-arrow)" pathLength={1} className="fp-draw" />
-            <path d="M224 65H266" stroke="var(--primary)" strokeWidth="3" markerEnd="url(#fp-ghost-arrow)" pathLength={1} className="fp-draw" style={{ animationDelay: "0.5s" }} />
+            <path d="M94 65H136" stroke="var(--primary)" strokeWidth="3" markerEnd={`url(#${arrow})`} pathLength={1} className="fp-draw" />
+            <path d="M224 65H266" stroke="var(--primary)" strokeWidth="3" markerEnd={`url(#${arrow})`} pathLength={1} className="fp-draw" style={{ animationDelay: "0.5s" }} />
             <path d="M60 88C60 118 90 122 136 122" stroke="var(--line-strong)" strokeWidth="2.5" pathLength={1} className="fp-draw" style={{ animationDelay: "0.9s" }} />
           </g>
           <g fill="var(--muted-foreground)" fontSize="12" fontWeight="600" textAnchor="middle">
