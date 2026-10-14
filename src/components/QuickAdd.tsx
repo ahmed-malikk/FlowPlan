@@ -35,7 +35,7 @@ export function QuickAdd({ tasks, onSave }: { tasks: Task[]; onSave: (task: Task
   const message = errors.name ?? errors.duration ?? errors.dependsOn;
 
   return (
-    <form onSubmit={submit} noValidate autoComplete="off" className="mb-[18px] print:hidden">
+    <form id="quick-add" onSubmit={submit} noValidate autoComplete="off" className="mb-[18px] print:hidden">
       <div className="flex flex-wrap gap-2.5">
         <Input
           ref={nameRef}

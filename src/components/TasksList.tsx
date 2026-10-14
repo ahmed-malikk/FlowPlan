@@ -3,6 +3,7 @@
 import { Minus, Plus } from "lucide-react";
 import { useRef } from "react";
 import { endDateOf, formatDate, MAX_DURATION, startDateOf } from "@/lib/plan";
+import { SlackChip } from "@/components/SlackChip";
 import type { ScheduledTask, Task } from "@/lib/scheduler";
 import { cn } from "@/lib/utils";
 
@@ -102,9 +103,7 @@ function TaskRow({
               critical
             </span>
           ) : (
-            <span className="inline-flex rounded-full border border-border bg-secondary px-2.5 py-0.5 text-xs whitespace-nowrap">
-              {timing.slack}d slack
-            </span>
+            <SlackChip days={timing.slack} />
           ))}
         <span className="mt-0.5 block text-[12.5px] break-words text-muted-foreground">{sub}</span>
         {task.notes && (

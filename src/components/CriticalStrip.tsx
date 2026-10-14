@@ -12,7 +12,7 @@ export function CriticalStrip({ tasks, startDate }: { tasks: ScheduledTask[]; st
   if (critical.length === 0) return null;
 
   return (
-    <div className="border-t border-border bg-g0/30 px-5 pt-4 pb-[18px]">
+    <div id="critical-strip" className="border-t border-border bg-g0/30 px-5 pt-4 pb-[18px]">
       <div className="mb-3.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h2 className="text-[17px] font-bold tracking-tight">Critical path</h2>
         <p className="text-[13px] text-muted-foreground">These tasks cannot slip. Everything else has slack.</p>

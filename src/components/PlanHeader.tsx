@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Printer, Trash2 } from "lucide-react";
+import { CircleHelp, MoreHorizontal, Printer, Trash2 } from "lucide-react";
 import { PlanArt } from "@/components/PlanArt";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -16,6 +16,7 @@ type Props = {
   onRename: (name: string) => void;
   onStartDate: (iso: string) => void;
   onPrint: () => void;
+  onTour: () => void;
   onDelete: () => void;
 };
 
@@ -23,7 +24,7 @@ type Props = {
  * Title (click to rename), one status line, start date and the plan menu.
  * The finish date flips in when it changes; a polite live region announces the sentence.
  */
-export function PlanHeader({ name, startDate, status, complete, canPrint, onRename, onStartDate, onPrint, onDelete }: Props) {
+export function PlanHeader({ name, startDate, status, complete, canPrint, onRename, onStartDate, onPrint, onTour, onDelete }: Props) {
   return (
     <div className="relative mb-4 min-h-[110px]">
       <PlanArt complete={complete} />
@@ -76,6 +77,9 @@ export function PlanHeader({ name, startDate, status, complete, canPrint, onRena
           <DropdownMenuContent>
             <DropdownMenuItem disabled={!canPrint} onSelect={onPrint}>
               <Printer className="size-4" aria-hidden="true" /> Print / PDF
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={onTour}>
+              <CircleHelp className="size-4" aria-hidden="true" /> Take the tour
             </DropdownMenuItem>
             <DropdownMenuItem destructive onSelect={onDelete}>
               <Trash2 className="size-4" aria-hidden="true" /> Delete project

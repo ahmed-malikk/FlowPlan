@@ -4,18 +4,21 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { EmptyPlan } from "@/components/EmptyPlan";
 import { CriticalNote } from "@/components/CriticalNote";
 import { CriticalStrip } from "@/components/CriticalStrip";
 import { FlowDiagram } from "@/components/FlowDiagram";
 import { Gantt } from "@/components/Gantt";
 import { PlanHeader } from "@/components/PlanHeader";
-import { QuickAdd } from "@/components/QuickAdd";
+import { QUICK_ADD_INPUT, QuickAdd } from "@/components/QuickAdd";
 import { EditSheet } from "@/components/EditSheet";
 import { TasksList } from "@/components/TasksList";
 import { Button } from "@/components/ui/button";
+import { Tour } from "@/components/Tour";
 import { ViewSwitch, type View } from "@/components/ViewSwitch";
-import { removeTask, setDone, setDuration, upsertTask } from "@/lib/plan";
+import { exampleProject, removeTask, setDone, setDuration, upsertTask } from "@/lib/plan";
 import { rememberPlan } from "@/lib/nav";
+import { hasSeen, markSeen } from "@/lib/seen";
 import { schedule, type Project, type Task } from "@/lib/scheduler";
 import { statusLine } from "@/lib/status";
 import { addProject, deleteProject, updateProject } from "@/lib/storage";
@@ -53,6 +56,7 @@ function ProjectView({ project }: { project: Project }) {
   useEffect(() => rememberPlan(project.id), [project.id]);
 
   const [view, setView] = useState<View>("tasks");
+  const [tourOpen, setTourOpen] = useState(false);
   const [highlightId, setHighlightId] = useState<string | null>(null); // the task pointed at, in the list or the diagram
   const [ripple, setRipple] = useState<{ id: string; tick: number } | null>(null); // a what-if change to pulse
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
@@ -73,6 +77,14 @@ function ProjectView({ project }: { project: Project }) {
 
   const update = (change: (p: Project) => Project) => updateProject(project.id, change);
   const setTasks = (change: (tasks: Task[]) => Task[]) => update((p) => ({ ...p, tasks: change(p.tasks) }));
+
+  // First visit to a plan that has tasks: offer the tour once, after the page has settled.
+  useEffect(() => {
+    if (project.tasks.length === 0 || hasSeen("tour")) return;
+    const timer = setTimeout(() => setTourOpen(true), 1800);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only on arrival, not whenever tasks change
+  }, []);
 
   /** Deleting a task is never final: the toast offers Undo and restores the whole task list. */
   function removeTaskWithUndo(taskId: string) {
@@ -109,6 +121,7 @@ function ProjectView({ project }: { project: Project }) {
         onRename={(name) => update((p) => ({ ...p, name }))}
         onStartDate={(startDate) => update((p) => ({ ...p, startDate }))}
         onPrint={() => window.print()}
+        onTour={() => setTourOpen(true)}
         onDelete={remove}
       />
 
@@ -156,7 +169,10 @@ function ProjectView({ project }: { project: Project }) {
           className={cn(CARD, "flex flex-col overflow-hidden print:hidden", view === "tasks" && "max-[900px]:hidden")}
         >
           {!hasTasks ? (
-            <p className="p-[18px] text-muted-foreground">Add a task and the plan draws itself here.</p>
+            <EmptyPlan
+              onExample={() => setTasks(() => exampleProject().tasks)}
+              onFirstTask={() => document.getElementById(QUICK_ADD_INPUT)?.focus()}
+            />
           ) : result.ok ? (
             <>
             <FlowDiagram
@@ -187,6 +203,15 @@ function ProjectView({ project }: { project: Project }) {
           </section>
         )}
       </div>
+
+      <Tour
+        open={tourOpen}
+        setView={setView}
+        onClose={() => {
+          markSeen("tour");
+          setTourOpen(false);
+        }}
+      />
 
       <EditSheet
         task={project.tasks.find((t) => t.id === editingId) ?? null}
