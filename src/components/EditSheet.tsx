@@ -2,8 +2,7 @@
 
 import { X } from "lucide-react";
 import { Dialog as DialogPrimitive } from "radix-ui";
-import { TaskForm } from "@/components/TaskForm";
-import { Button } from "@/components/ui/button";
+import { TaskEditForm } from "@/components/TaskEditForm";
 import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import type { Task } from "@/lib/scheduler";
 
@@ -34,21 +33,19 @@ export function EditSheet({ task, tasks, onClose, onSave, onDelete, onCloseAutoF
             <>
               <div>
                 <DialogTitle>Edit task</DialogTitle>
-                <DialogDescription className="mt-1">Change the name, the days or what it waits for.</DialogDescription>
+                <DialogDescription className="mt-1">Change the name, the days, who owns it or what it waits for.</DialogDescription>
               </div>
-              <TaskForm
+              <TaskEditForm
                 key={task.id}
+                task={task}
                 tasks={tasks}
-                initial={task}
                 onSave={(t) => {
                   onSave(t);
                   onClose();
                 }}
                 onCancel={onClose}
+                onDelete={() => onDelete(task.id)}
               />
-              <Button variant="destructive" className="self-start" onClick={() => onDelete(task.id)}>
-                Delete task
-              </Button>
             </>
           )}
           <DialogPrimitive.Close
