@@ -1,7 +1,15 @@
 import { Analytics } from "@vercel/analytics/next";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Figtree, JetBrains_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+
+// next/font downloads the fonts at build time and serves them from our own site (no request to Google
+// at runtime). Figtree carries all text; the monospace face is for dates and numbers.
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
+
+export const viewport: Viewport = { themeColor: "#02050f", viewportFit: "cover" };
 
 export const metadata: Metadata = {
   title: "FlowPlan · critical path planner",
@@ -11,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${figtree.variable} ${jetbrainsMono.variable}`}>
       <body>
         <header className="site-header">
           <div className="container site-header-inner">
