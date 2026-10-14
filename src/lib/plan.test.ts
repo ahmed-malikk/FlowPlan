@@ -4,6 +4,7 @@ import {
   dependentsOf,
   endDateOf,
   exampleProject,
+  loopIfWaitsFor,
   removeTask,
   setDone,
   setDuration,
@@ -219,5 +220,28 @@ describe("notes on tasks", () => {
     const [a, b] = parseProjects(raw)[0].tasks;
     expect(a.notes).toBe("Ask Sara");
     expect(b.notes).toBeUndefined();
+  });
+});
+
+describe("loopIfWaitsFor", () => {
+  const t = (id: string, deps: string[] = []): Task => ({ id, name: id.toUpperCase(), duration: 1, dependsOn: deps });
+  const chain = [t("a"), t("b", ["a"]), t("c", ["b"])];
+
+  it("is null when the new dependency keeps the plan a straight chain", () => {
+    expect(loopIfWaitsFor(chain, "c", "a")).toBeNull();
+  });
+
+  it("names the loop when the first task would wait for the last", () => {
+    expect(loopIfWaitsFor(chain, "a", "c")).toMatch(/A → B → C → A|B → C → A → B|C → A → B → C/);
+  });
+
+  it("refuses a task waiting for itself", () => {
+    expect(loopIfWaitsFor(chain, "b", "b")).toBe("A task can't wait for itself");
+  });
+
+  it("does not change the tasks it was given", () => {
+    const before = JSON.stringify(chain);
+    loopIfWaitsFor(chain, "a", "c");
+    expect(JSON.stringify(chain)).toBe(before);
   });
 });

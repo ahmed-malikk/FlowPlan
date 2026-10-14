@@ -3,7 +3,8 @@
  * It uses the browser's View Transitions API and falls back to a plain page change where that is
  * missing or when the visitor prefers reduced motion.
  */
-type ViewTransitionDocument = Document & { startViewTransition?: (update: () => Promise<void> | void) => unknown };
+type ViewTransitionHandle = { ready: Promise<void>; finished: Promise<void>; updateCallbackDone: Promise<void> };
+type ViewTransitionDocument = Document & { startViewTransition?: (update: () => Promise<void> | void) => ViewTransitionHandle };
 
 export const ROUTE_TRANSITION_NAME = "route";
 
@@ -35,9 +36,12 @@ export function navigateWithRouteTransition(source: Element | null, go: () => vo
 
   const el = source as HTMLElement;
   el.style.viewTransitionName = ROUTE_TRANSITION_NAME;
-  doc.startViewTransition(async () => {
+  const transition = doc.startViewTransition(async () => {
     el.style.viewTransitionName = "";
     go();
     await whenPresent("[data-flow-board]", 700);
   });
+  // A browser can abort a transition (for example when the viewport resizes). The page change still
+  // happens, so an aborted animation is not an error worth surfacing.
+  for (const promise of [transition.ready, transition.finished, transition.updateCallbackDone]) promise.catch(() => {});
 }

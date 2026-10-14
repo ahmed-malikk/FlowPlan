@@ -61,6 +61,18 @@ export function validateTask(
   return Object.keys(errors).length ? { ok: false, errors } : { ok: true, task };
 }
 
+/**
+ * Would making `taskId` wait for `depId` (on top of what it already waits for) create a loop?
+ * Returns the loop in words ("A → B → A") or null when it is fine. The edit dialog uses this to
+ * switch off options that would break the plan and to say why.
+ */
+export function loopIfWaitsFor(tasks: Task[], taskId: string, depId: string): string | null {
+  if (taskId === depId) return "A task can't wait for itself";
+  const next = tasks.map((t) => (t.id === taskId && !t.dependsOn.includes(depId) ? { ...t, dependsOn: [...t.dependsOn, depId] } : t));
+  const sorted = topologicalSort(next);
+  return sorted.ok ? null : describeCycle(sorted.cycle, next);
+}
+
 /** Replaces the task with the same id, or appends it. */
 export function upsertTask(tasks: Task[], task: Task): Task[] {
   return tasks.some((t) => t.id === task.id)
