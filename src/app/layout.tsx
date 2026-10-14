@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Figtree, JetBrains_Mono } from "next/font/google";
 import { NewProjectProvider } from "@/components/NewProjectProvider";
 import { RouteBackdrop } from "@/components/RouteBackdrop";
+import { ScrollIndicator } from "@/components/ScrollIndicator";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TabBar } from "@/components/TabBar";
 import { Toaster } from "@/components/ui/sonner";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SiteHeader />
           <main className="relative mx-auto w-full max-w-[1280px] flex-1 px-4 min-[521px]:px-[22px]">{children}</main>
           <TabBar />
+          <ScrollIndicator />
         </div>
         </NewProjectProvider>
         <Toaster />
