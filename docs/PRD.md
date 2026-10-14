@@ -82,6 +82,6 @@ The algorithm is pure functions with no React imports, so it's tested with Vites
 - **Secondary metric (3 hallway testers):** not yet run; protocol in [test plan §8](test-plan.md#8-usability-test-manual).
 
 **As of 2026-10-15 (v2.0):**
-- **Quality (met):** 128 unit tests pass (the original 51 are unchanged); 30 user journeys × 3 environments give 86 passed, 4 skipped by design (cases that only apply to phone or only to a mouse), 0 failed on the local production build. See [test report](test-report.md).
+- **Quality (met):** 128 unit tests pass (the original 51 are unchanged); 30 user journeys × 3 environments give 86 passed, 4 skipped by design (cases that only apply to phone or only to a mouse), 0 failed on the local production build and again on the live site. See [test report](test-report.md).
 - **Defects:** testing found 1 phone-only bug in the redesign (#40, a blank plan hid its empty state); fixed before release.
 - **Still to measure:** the hallway usability test is still not run.

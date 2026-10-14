@@ -41,7 +41,7 @@ Run on the production build of the `redesign-v2` branch (the commit before the m
 
 **Found while comparing the build with the approved prototype** (before release, so not logged as defects): the flow diagram clipped its last task at a 1440 px window, task rows carried long dates, and a footer repeated the header's links. Fixed in `c35552e`, checked by a new unit test that sizes the diagram for boards 700 to 1000 px wide and by screenshots of the desktop and phone layouts.
 
-**Not covered:** Safari and Firefox; the usability test with first-time users; a manual check on a real phone. The system tests are not run in CI (only typecheck, unit tests and the build are). After the release the same system tests are run against the live site; the result is added below.
+**Not covered:** Safari and Firefox; the usability test with first-time users; a manual check on a real phone. The system tests are not run in CI (only typecheck, unit tests and the build are). After the release the same system tests are run against the live site;.
 
 The sections below are the v1.0 and v1.1 reports, kept as a record.
 
