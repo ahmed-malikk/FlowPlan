@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { FlowDiagram } from "@/components/FlowDiagram";
 import { Gantt } from "@/components/Gantt";
 import { PlanHeader } from "@/components/PlanHeader";
 import { QuickAdd } from "@/components/QuickAdd";
@@ -20,7 +21,7 @@ import { useProjects } from "@/lib/useProjects";
 import { cn } from "@/lib/utils";
 
 const CARD =
-  "rounded-2xl border border-border bg-card p-[18px] shadow-[0_16px_36px_-18px_rgba(0,0,0,0.7)] min-[901px]:max-h-[min(720px,80vh)] min-[901px]:overflow-auto";
+  "rounded-2xl border border-border bg-card shadow-[0_16px_36px_-18px_rgba(0,0,0,0.7)] min-[901px]:max-h-[min(720px,80vh)]";
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -50,6 +51,9 @@ function ProjectView({ project }: { project: Project }) {
   useEffect(() => rememberPlan(project.id), [project.id]);
 
   const [view, setView] = useState<View>("tasks");
+  const [highlightId, setHighlightId] = useState<string | null>(null); // the task pointed at, in the list or the diagram
+  const [ripple, setRipple] = useState<{ id: string; tick: number } | null>(null); // a what-if change to pulse
+  const [lastAddedId, setLastAddedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const editOpener = useRef<HTMLElement | null>(null); // gets focus back when the edit dialog closes
   const result = useMemo(() => schedule(project), [project]);
@@ -99,20 +103,30 @@ function ProjectView({ project }: { project: Project }) {
         onDelete={remove}
       />
 
-      <QuickAdd tasks={project.tasks} onSave={(task) => setTasks((ts) => upsertTask(ts, task))} />
+      <QuickAdd
+        tasks={project.tasks}
+        onSave={(task) => {
+          setLastAddedId(task.id);
+          setTasks((ts) => upsertTask(ts, task));
+        }}
+      />
 
       <ViewSwitch view={view} onChange={setView} />
 
       {/* Two cards of equal height side by side; on a phone one at a time, Tasks first. */}
       <div className="grid grid-cols-[minmax(0,1fr)] gap-[18px] min-[901px]:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
-        <section id="tasks-card" aria-label="Tasks" className={cn(CARD, view === "diagram" && "max-[900px]:hidden")}>
+        <section id="tasks-card" aria-label="Tasks" className={cn(CARD, "p-[18px] min-[901px]:overflow-auto", view === "diagram" && "max-[900px]:hidden")}>
           <h2 className="mb-1.5 text-[17px] font-bold tracking-tight">Tasks</h2>
           {hasTasks ? (
             <TasksList
               tasks={project.tasks}
               scheduled={scheduled}
               startDate={project.startDate}
-              onDuration={(taskId, d) => setTasks((ts) => setDuration(ts, taskId, d))}
+              onDuration={(taskId, d) => {
+                setRipple((r) => ({ id: taskId, tick: (r?.tick ?? 0) + 1 }));
+                setTasks((ts) => setDuration(ts, taskId, d));
+              }}
+              onHighlight={setHighlightId}
               onDone={(taskId, done) => setTasks((ts) => setDone(ts, taskId, done))}
               onEdit={(id, opener) => {
                 editOpener.current = opener;
@@ -125,17 +139,39 @@ function ProjectView({ project }: { project: Project }) {
           )}
         </section>
 
-        <section id="flow-card" aria-label="Timeline" className={cn(CARD, view === "tasks" && "max-[900px]:hidden")}>
+        <section
+          id="flow-card"
+          aria-label="Flow diagram"
+          className={cn(CARD, "flex flex-col overflow-hidden print:hidden", view === "tasks" && "max-[900px]:hidden")}
+        >
           {!hasTasks ? (
-            <p className="text-muted-foreground">Add a task and the plan draws itself here.</p>
+            <p className="p-[18px] text-muted-foreground">Add a task and the plan draws itself here.</p>
           ) : result.ok ? (
-            <Gantt tasks={result.tasks} finish={result.finish} startDate={project.startDate} />
+            <FlowDiagram
+              tasks={result.tasks}
+              finish={result.finish}
+              highlightId={highlightId}
+              ripple={ripple}
+              lastAddedId={lastAddedId}
+              onHighlight={setHighlightId}
+              onEdit={(id, opener) => {
+                editOpener.current = opener;
+                setEditingId(id);
+              }}
+            />
           ) : (
-            <p role="alert" className="font-semibold text-destructive">
+            <p role="alert" className="p-[18px] font-semibold text-destructive">
               {result.warnings.join(" ")}
             </p>
           )}
         </section>
+
+        {/* The printed page keeps the timeline: a diagram is for the screen, a timeline is for paper. */}
+        {hasTasks && result.ok && (
+          <section aria-label="Timeline" className="hidden print:block">
+            <Gantt tasks={result.tasks} finish={result.finish} startDate={project.startDate} />
+          </section>
+        )}
       </div>
 
       <EditSheet

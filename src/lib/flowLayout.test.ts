@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { flowStructure } from "./flowLayout";
+import { flowStructure, related } from "./flowLayout";
 import { exampleProject } from "./plan";
 import { schedule, type ScheduledTask } from "./scheduler";
 
@@ -85,5 +85,29 @@ describe("flowStructure edge cases", () => {
       [0, 1, 2],
     ]);
     expect(flow.maxRows).toBe(2);
+  });
+});
+
+describe("related", () => {
+  const tasks = scheduled();
+  const flow = flowStructure(tasks);
+  const id = (name: string) => tasks.find((t) => t.name === name)!.id;
+  const names = (ids: Iterable<string>) => [...ids].map((i) => tasks.find((t) => t.id === i)!.name).sort();
+
+  it("finds everything a task waits for, directly or not", () => {
+    expect(names(related(flow, id("Testing")).ancestors)).toEqual(["Backend API", "Frontend", "Requirements", "UI design"]);
+  });
+
+  it("finds everything that waits for a task, with the number of steps away", () => {
+    const r = related(flow, id("UI design"));
+    expect(names(r.descendants.keys())).toEqual(["Backend API", "Deploy", "Frontend", "Testing", "User docs"]);
+    expect(r.descendants.get(id("Backend API"))).toBe(1);
+    expect(r.descendants.get(id("Testing"))).toBe(2);
+    expect(r.descendants.get(id("Deploy"))).toBe(2);
+  });
+
+  it("is empty at the ends of the plan", () => {
+    expect(related(flow, id("Requirements")).ancestors.size).toBe(0);
+    expect(related(flow, id("Deploy")).descendants.size).toBe(0);
   });
 });

@@ -65,3 +65,45 @@ export function flowStructure(tasks: ScheduledTask[]): FlowStructure {
     maxRows: Math.max(0, ...[...inLevel.values()].map((ids) => ids.length)),
   };
 }
+
+export type Related = {
+  ancestors: Set<string>; // everything the task waits for, directly or not
+  descendants: Map<string, number>; // everything that waits for it, with how many steps away
+};
+
+/**
+ * What lights up when you point at a task: the tasks before it and the tasks after it.
+ * `descendants` carries the distance so a delay can ripple outward one step at a time.
+ */
+export function related(flow: FlowStructure, id: string): Related {
+  const into = new Map<string, string[]>(); // task -> tasks it waits for
+  const out = new Map<string, string[]>(); // task -> tasks that wait for it
+  for (const e of flow.edges) {
+    into.set(e.to, [...(into.get(e.to) ?? []), e.from]);
+    out.set(e.from, [...(out.get(e.from) ?? []), e.to]);
+  }
+
+  const ancestors = new Set<string>();
+  const walkBack = (task: string) => {
+    for (const before of into.get(task) ?? []) {
+      if (!ancestors.has(before)) {
+        ancestors.add(before);
+        walkBack(before);
+      }
+    }
+  };
+  walkBack(id);
+
+  const descendants = new Map<string, number>();
+  const walkForward = (task: string, step: number) => {
+    for (const after of out.get(task) ?? []) {
+      if (!descendants.has(after) || step < descendants.get(after)!) {
+        descendants.set(after, step);
+        walkForward(after, step + 1);
+      }
+    }
+  };
+  walkForward(id, 1);
+
+  return { ancestors, descendants };
+}

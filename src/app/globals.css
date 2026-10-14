@@ -90,6 +90,11 @@
   --radius-2xl: calc(var(--radius) + 8px);
 }
 
+/* The project card's mini route morphs into this board when a plan is opened. */
+[data-flow-board] {
+  view-transition-name: route;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -165,6 +170,24 @@
 }
 
 @layer utilities {
+  /* Diagram: edges draw in level by level, nodes arrive after them, a changed task pulses. */
+  .fp-edge-in {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: fp-draw 0.9s var(--ease-out-soft) forwards;
+    animation-delay: calc(var(--lv) * 0.2s + 0.25s);
+  }
+  .fp-node-in {
+    animation: fp-node-in 0.55s var(--ease-out-soft) both;
+    animation-delay: calc(var(--lv) * 0.2s);
+  }
+  .fp-pop {
+    animation: fp-pop 0.5s var(--ease-out-soft) both;
+  }
+  .fp-ripple {
+    animation: fp-ripple 0.9s ease-out both;
+    animation-delay: calc(var(--d) * 0.14s);
+  }
   /* A changed number slides up into place. */
   .fp-flip {
     animation: fp-flip 0.6s var(--ease-out-soft);
@@ -209,7 +232,8 @@
     scroll-behavior: auto !important;
   }
   .fp-draw,
-  .fp-logo-line {
+  .fp-logo-line,
+  .fp-edge-in {
     stroke-dashoffset: 0;
   }
 }
