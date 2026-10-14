@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { flowStructure, related } from "@/lib/flowLayout";
 import { flowGeometry, NODE_H } from "@/lib/flowGeometry";
 import type { ScheduledTask } from "@/lib/scheduler";
@@ -17,6 +18,10 @@ type Props = {
   onEdit: (id: string, opener: HTMLElement) => void;
 };
 
+// A browser does not re-run measuring code on the printed page, so the diagram is drawn for a
+// fixed board that fills the printed card (A4 landscape, full width) from the moment printing starts.
+const PRINT_SIZE = { width: 1040, height: 400 };
+
 // The draw-in plays once per visit, not every time a plan is opened.
 let introPlayed = false;
 
@@ -27,7 +32,23 @@ let introPlayed = false;
  */
 export function FlowDiagram({ tasks, finish, highlightId, ripple, lastAddedId, onHighlight, onEdit }: Props) {
   const boardRef = useRef<HTMLDivElement>(null);
-  const size = useElementSize(boardRef);
+  const measured = useElementSize(boardRef);
+  const [printing, setPrinting] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("print");
+    const on = () => flushSync(() => setPrinting(true));
+    const off = () => setPrinting(false);
+    const change = () => (media.matches ? on() : off());
+    window.addEventListener("beforeprint", on);
+    window.addEventListener("afterprint", off);
+    media.addEventListener("change", change);
+    return () => {
+      window.removeEventListener("beforeprint", on);
+      window.removeEventListener("afterprint", off);
+      media.removeEventListener("change", change);
+    };
+  }, []);
+  const size = printing ? PRINT_SIZE : measured;
   const flow = useMemo(() => flowStructure(tasks), [tasks]);
   const geo = useMemo(() => (size.width > 0 ? flowGeometry(flow, size) : null), [flow, size]);
   const [intro] = useState(() => !introPlayed);
@@ -65,7 +86,7 @@ export function FlowDiagram({ tasks, finish, highlightId, ripple, lastAddedId, o
       tabIndex={0}
       onMouseLeave={() => onHighlight(null)}
       className={cn(
-        "relative min-h-[300px] flex-1 overflow-auto bg-[radial-gradient(circle_at_1px_1px,rgba(77,105,182,0.4)_1px,transparent_0)] [background-size:22px_22px]",
+        "relative min-h-[300px] flex-1 overflow-auto print:h-[400px] print:flex-none print:overflow-hidden bg-[radial-gradient(circle_at_1px_1px,rgba(77,105,182,0.4)_1px,transparent_0)] [background-size:22px_22px]",
         geo?.vertical && "flex-none overflow-visible",
       )}
       style={geo?.vertical ? { height: geo.height } : undefined}

@@ -26,7 +26,7 @@ import { useProjects } from "@/lib/useProjects";
 import { cn } from "@/lib/utils";
 
 const CARD =
-  "rounded-2xl border border-border bg-card shadow-[0_16px_36px_-18px_rgba(0,0,0,0.7)] min-[901px]:max-h-[min(720px,80vh)]";
+  "rounded-2xl border border-border bg-card shadow-[0_16px_36px_-18px_rgba(0,0,0,0.7)] min-[901px]:max-h-[min(720px,80vh)] print:max-h-none";
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -169,8 +169,8 @@ function ProjectView({ project }: { project: Project }) {
       <ViewSwitch view={view} onChange={setView} />
 
       {/* Two cards of equal height side by side; on a phone one at a time, Tasks first. */}
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-[18px] min-[901px]:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
-        <section id="tasks-card" aria-label="Tasks" className={cn(CARD, "p-[18px] min-[901px]:overflow-auto print:max-h-none print:overflow-visible print:border-0 print:p-0", view === "diagram" && "max-[900px]:hidden print:block")}>
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-[18px] min-[901px]:grid-cols-[minmax(320px,380px)_minmax(0,1fr)] print:grid-cols-[minmax(0,1fr)]!">
+        <section id="tasks-card" aria-label="Tasks" className={cn(CARD, "p-[18px] min-[901px]:overflow-auto print:max-h-none print:overflow-visible", view === "diagram" && "max-[900px]:hidden print:block!")}>
           <div className="mb-1.5 flex items-baseline justify-between gap-2">
             <h2 className="text-[17px] font-bold tracking-tight">Tasks</h2>
             {/* Phones and tablets show one card at a time, so the way to the diagram is one tap. */}
@@ -218,7 +218,7 @@ function ProjectView({ project }: { project: Project }) {
         <section
           id="flow-card"
           aria-label="Flow diagram"
-          className={cn(CARD, "flex flex-col overflow-hidden print:hidden", view === "tasks" && "max-[900px]:hidden")}
+          className={cn(CARD, "flex flex-col overflow-hidden print:order-first print:break-inside-avoid", view === "tasks" && "max-[900px]:hidden print:flex!")}
         >
           {!hasTasks ? (
             <EmptyPlan onExample={startWithExample} onFirstTask={focusQuickAdd} />
@@ -245,9 +245,9 @@ function ProjectView({ project }: { project: Project }) {
           )}
         </section>
 
-        {/* The printed page keeps the timeline: a diagram is for the screen, a timeline is for paper. */}
+        {/* The printed page adds a timeline under the diagram, for reading dates on paper. */}
         {hasTasks && result.ok && (
-          <section aria-label="Timeline" className="hidden print:block">
+          <section aria-label="Timeline" className={cn(CARD, "hidden p-[18px] print:block print:break-inside-avoid")}>
             <PrintTimeline tasks={result.tasks} finish={result.finish} startDate={project.startDate} />
           </section>
         )}

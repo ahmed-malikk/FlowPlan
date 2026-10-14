@@ -29,7 +29,7 @@ export function SiteHeader() {
     );
 
   return (
-    <header className="relative overflow-hidden border-b border-border/60 bg-linear-to-r from-g0/95 via-[#061237]/80 to-[#0e2460]/70 print:hidden">
+    <header className="relative overflow-hidden border-b border-border/60 bg-linear-to-r from-g0/95 via-[#061237]/80 to-[#0e2460]/70">
       <HeaderArt />
       <div className="relative flex h-[66px] items-center gap-3 px-3.5 min-[521px]:px-[22px]">
         <Link href="/" className="flex items-center gap-2.5 rounded-md text-lg font-bold tracking-tight" aria-label="FlowPlan, your plans">
@@ -37,7 +37,7 @@ export function SiteHeader() {
           <span className="max-[520px]:hidden">FlowPlan</span>
         </Link>
 
-        <nav aria-label="Main" className="ml-3 hidden items-center gap-1 md:flex">
+        <nav aria-label="Main" className="ml-3 hidden items-center gap-1 md:flex print:hidden">
           <Link href="/" className={navLink(section === "plans")} aria-current={section === "plans" ? "page" : undefined}>
             Projects
           </Link>
@@ -51,12 +51,12 @@ export function SiteHeader() {
         <span className="min-w-0 flex-1 truncate font-semibold min-[521px]:hidden">{pageTitle(pathname, planName)}</span>
         <span className="flex-1 max-[520px]:hidden" />
 
-        <Button asChild variant="outline" className="max-[520px]:hidden">
+        <Button asChild variant="outline" className="max-[520px]:hidden print:hidden">
           <Link href="/how-its-built" aria-current={section === "built" ? "page" : undefined}>
             How it&apos;s built
           </Link>
         </Button>
-        <Button onClick={newProject.open}>
+        <Button onClick={newProject.open} className="print:hidden">
           <span className="max-[520px]:hidden">New project</span>
           <span className="min-[521px]:hidden">New</span>
         </Button>

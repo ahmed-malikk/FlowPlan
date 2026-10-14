@@ -410,16 +410,27 @@ test("ST-23 How it's built: personal, complete, no inspiration, with a working e
   await expect(page.locator("[data-station][data-reached]")).toHaveCount(9);
 });
 
-test("ST-24 print: a light page with the tasks and the timeline, without the screen-only parts", async ({ page }) => {
+test("ST-24 print: the page keeps the app's look (dark page, header, diagram, timeline) without the screen-only controls", async ({ page }) => {
   await openExample(page);
   await page.emulateMedia({ media: "print" });
-  await expect(page.locator("header")).toBeHidden();
+  await page.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
+  await expect(page.locator("header")).toBeVisible();
+  await expect(page.locator("header").getByRole("button", { name: "New project" })).toBeHidden();
   await expect(page.locator("#quick-add")).toBeHidden();
-  await expect(page.locator("#flow-card")).toBeHidden();
   await expect(page.locator("#tasks-card")).toBeVisible();
+  await expect(page.locator("#flow-card")).toBeVisible();
+  await expect(page.locator("#flow-card [data-flow-board] button")).toHaveCount(7);
+  await expect(page.locator("#critical-strip")).toBeVisible();
   await expect(page.getByRole("img", { name: /^Timeline of 7 tasks over 12 days/ })).toBeVisible();
-  const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundImage);
-  expect(bg).toBe("none");
+  // the dark navy page is kept (not a white page), and colours are forced on for the printer
+  const look = await page.evaluate(() => ({
+    bg: getComputedStyle(document.documentElement).backgroundImage,
+    card: getComputedStyle(document.querySelector("#tasks-card")!).backgroundColor,
+    adjust: getComputedStyle(document.body).getPropertyValue("print-color-adjust"),
+  }));
+  expect(look.bg).not.toBe("none");
+  expect(look.card).not.toBe("rgb(255, 255, 255)");
+  expect(look.adjust).toBe("exact");
 });
 
 test("ST-25 the tab bar and the Tasks | Diagram switch exist on a phone only", async ({ page }) => {

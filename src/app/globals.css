@@ -227,42 +227,19 @@
  * component prints correctly without its own print rules; only what should not print is hidden
  * (print:hidden on the header, forms, buttons and the diagram).
  */
+/* Printing keeps the app's own look: the same navy page, amber and blue, header and graphics.
+   A4 landscape gives the two-column layout; "background graphics" is forced on so the browser
+   does not drop the colours. Screen-only controls are hidden with print:hidden in the markup. */
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
 @media print {
-  :root {
-    --background: #fff;
-    --foreground: #111827;
-    --card: #fff;
-    --card-foreground: #111827;
-    --popover: #fff;
-    --popover-foreground: #111827;
-    --secondary: #f3f4f6;
-    --secondary-foreground: #111827;
-    --muted: #f3f4f6;
-    --muted-foreground: #4b5563;
-    --body-text: #1f2937;
-    --accent: #f3f4f6;
-    --accent-foreground: #111827;
-    --border: #d1d5db;
-    --input: #9ca3af;
-    --primary: #b45309;
-    --primary-foreground: #fff;
-    --amber-text: #92400e;
-    --amber-soft: #fef3c7;
-    --slack: #2563eb;
-    --edge: #6b7280;
-    --done: #047857;
-    --surface-2: #f3f4f6;
-    --line-strong: #9ca3af;
-    --g0: #fff;
-    --g1: #fff;
-    --g2: #fff;
-    color-scheme: light;
-  }
-  html {
-    background: none !important;
-  }
-  * {
-    box-shadow: none !important;
+  html,
+  body,
+  body * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   li,
   tr {

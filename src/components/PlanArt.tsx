@@ -9,7 +9,7 @@ export function PlanArt({ complete }: { complete: boolean }) {
     <svg
       viewBox="0 0 420 150"
       aria-hidden="true"
-      className={`pointer-events-none absolute top-[-6px] right-0 hidden h-[150px] w-[min(420px,44%)] min-[901px]:block print:hidden ${complete ? "fp-complete" : ""}`}
+      className={`pointer-events-none absolute top-[-6px] right-0 hidden h-[150px] w-[min(420px,44%)] min-[901px]:block print:block ${complete ? "fp-complete" : ""}`}
     >
       <path
         d="M8 128C70 128 78 52 140 52S224 118 286 98 362 34 412 44"

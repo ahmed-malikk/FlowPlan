@@ -5,7 +5,7 @@
 export function RouteBackdrop() {
   return (
     <svg
-      className="pointer-events-none absolute inset-0 h-full w-full print:hidden"
+      className="pointer-events-none absolute inset-0 h-full w-full"
       viewBox="0 0 1280 1600"
       preserveAspectRatio="xMidYMin slice"
       aria-hidden="true"
