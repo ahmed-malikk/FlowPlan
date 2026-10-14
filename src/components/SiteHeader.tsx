@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark } from "@/components/LogoMark";
+import { useNewProject } from "@/components/NewProjectProvider";
 import { Button } from "@/components/ui/button";
 import { pageTitle, sectionFor } from "@/lib/nav";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ import { useProjects } from "@/lib/useProjects";
 export function SiteHeader() {
   const pathname = usePathname();
   const projects = useProjects();
+  const newProject = useNewProject();
   const section = sectionFor(pathname);
   const planId = section === "plan" ? pathname.split("/")[2] : null;
   const planName = planId ? projects?.find((p) => p.id === planId)?.name : undefined;
@@ -54,11 +56,9 @@ export function SiteHeader() {
             How it&apos;s built
           </Link>
         </Button>
-        <Button asChild>
-          <Link href="/#new-project">
-            <span className="max-[520px]:hidden">New project</span>
-            <span className="min-[521px]:hidden">New</span>
-          </Link>
+        <Button onClick={newProject.open}>
+          <span className="max-[520px]:hidden">New project</span>
+          <span className="min-[521px]:hidden">New</span>
         </Button>
       </div>
     </header>

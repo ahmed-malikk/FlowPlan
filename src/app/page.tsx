@@ -1,16 +1,19 @@
 "use client";
 
-import Link from "next/link";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { endDateOf, exampleProject, formatDate, isIsoDate, newId, todayIso } from "@/lib/plan";
-import { schedule, type Project } from "@/lib/scheduler";
-import { addProject, deleteProject } from "@/lib/storage";
+import { useNewProject } from "@/components/NewProjectProvider";
+import { ProjectCard } from "@/components/ProjectCard";
+import { RouteIllustration } from "@/components/RouteIllustration";
+import { Button } from "@/components/ui/button";
+import { exampleProject } from "@/lib/plan";
+import { addProject } from "@/lib/storage";
 import { useProjects } from "@/lib/useProjects";
 
 export default function ProjectsPage() {
   const projects = useProjects();
   const router = useRouter();
+  const newProject = useNewProject();
 
   function openExample() {
     const p = exampleProject();
@@ -19,146 +22,56 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="stack">
-      <div className="page-head">
-        <div>
-          <h1>Projects</h1>
-          <p className="muted" style={{ margin: "4px 0 0" }}>
-            Add tasks and what they wait for. FlowPlan finds the finish date, the critical path and how much every
-            task can slip.
-          </p>
-        </div>
+    <section className="py-6 min-[521px]:py-8">
+      <div className="fp-enter">
+        <h1 className="text-[clamp(30px,4.4vw,46px)] leading-[1.05] font-semibold tracking-tight">Your plans</h1>
+        <p className="mt-2.5 max-w-[56ch] text-muted-foreground">
+          Saved in this browser. Open a plan to see its critical path, the finish date and how much every task can slip.
+        </p>
       </div>
 
-      <CreateProject onCreated={(id) => router.push(`/project/${id}`)} />
-
       {projects === null ? (
-        <p className="muted">Loading…</p>
+        <p className="mt-8 text-muted-foreground">Loading…</p>
       ) : projects.length === 0 ? (
-        <div className="card empty">
-          <h2>No projects yet</h2>
-          <p className="muted">Create one above, or open the 7-task website example to see how it works.</p>
-          <button className="btn" onClick={openExample}>
-            Open the example project
-          </button>
+        <div className="fp-enter mx-auto grid max-w-[520px] justify-items-center gap-2.5 px-3 pt-9 pb-6 text-center">
+          <RouteIllustration className="h-auto w-[min(360px,100%)]" />
+          <h2 className="text-2xl font-bold tracking-tight">No plans yet</h2>
+          <p className="text-muted-foreground">
+            A plan shows which tasks can slip and which cannot. Start from an example and make it yours, or begin with a
+            blank plan.
+          </p>
+          <div className="mt-2 flex flex-wrap justify-center gap-2.5">
+            <Button onClick={openExample}>Add the example project</Button>
+            <Button variant="outline" onClick={newProject.open}>
+              Create your first plan
+            </Button>
+          </div>
         </div>
       ) : (
         <>
-          <div className="project-grid">
-            {projects.map((p) => (
-              <ProjectCard key={p.id} project={p} />
+          <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(270px,1fr))]">
+            {projects.map((p, i) => (
+              <ProjectCard key={p.id} project={p} index={i} />
             ))}
-          </div>
-          <div>
-            <button className="btn btn-ghost btn-sm" onClick={openExample}>
-              + Add the example project
+            <button
+              type="button"
+              onClick={newProject.open}
+              className="fp-enter grid min-h-[170px] place-items-center rounded-[18px] border border-dashed border-line-strong text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+            >
+              <span className="flex items-center gap-2 font-semibold">
+                <Plus className="size-5" aria-hidden="true" /> New plan
+              </span>
             </button>
           </div>
+          <button
+            type="button"
+            onClick={openExample}
+            className="mt-3 rounded-md px-1 py-3 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+          >
+            Add the example project
+          </button>
         </>
       )}
-    </div>
-  );
-}
-
-function CreateProject({ onCreated }: { onCreated: (id: string) => void }) {
-  const [name, setName] = useState("");
-  const [startDate, setStartDate] = useState(todayIso);
-  const [error, setError] = useState<string | null>(null);
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) return setError("Give the project a name.");
-    if (!isIsoDate(startDate)) return setError("Pick a start date.");
-    const project: Project = { id: newId(), name: name.trim(), startDate, tasks: [] };
-    addProject(project);
-    onCreated(project.id);
-  }
-
-  return (
-    <form className="card" onSubmit={submit} noValidate>
-      <h2>New project</h2>
-      <div className="create-form">
-        <div className="field">
-          <label htmlFor="project-name">Name</label>
-          <input
-            id="project-name"
-            className="input"
-            placeholder="e.g. Client website, FYP, Portfolio sprint"
-            value={name}
-            aria-invalid={!!error && !name.trim()}
-            onChange={(e) => {
-              setName(e.target.value);
-              setError(null);
-            }}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="project-start">Start date (day 0)</label>
-          <input
-            id="project-start"
-            className="input"
-            type="date"
-            value={startDate}
-            onChange={(e) => {
-              setStartDate(e.target.value);
-              setError(null);
-            }}
-          />
-        </div>
-        <button className="btn btn-primary" type="submit">
-          Create project
-        </button>
-      </div>
-      {error && (
-        <p className="field-error" role="alert" style={{ margin: "8px 0 0" }}>
-          {error}
-        </p>
-      )}
-    </form>
-  );
-}
-
-function ProjectCard({ project }: { project: Project }) {
-  const result = schedule(project);
-  const critical = result.ok ? result.tasks.filter((t) => t.critical).length : 0;
-
-  function remove() {
-    if (window.confirm(`Delete "${project.name}" and all its tasks? This can't be undone.`)) deleteProject(project.id);
-  }
-
-  return (
-    <article className="card project-card">
-      <h3>
-        <Link href={`/project/${project.id}`}>{project.name}</Link>
-      </h3>
-      <div className="project-stats">
-        <div>
-          <strong className="num">{project.tasks.length}</strong>
-          tasks
-        </div>
-        <div>
-          <strong className="num">{result.ok ? `${result.finish}d` : "—"}</strong>
-          duration
-        </div>
-        <div>
-          <strong className="num">{critical}</strong>
-          critical
-        </div>
-      </div>
-      <div className="small muted">
-        {formatDate(project.startDate)}
-        {result.ok && result.finish > 0 && <> → {formatDate(endDateOf(project.startDate, result.finish))}</>}
-      </div>
-      {!result.ok && <div className="alert alert-error small">Has a circular dependency</div>}
-      <div className="row">
-        <Link className="btn btn-sm" href={`/project/${project.id}`}>
-          Open
-        </Link>
-        <span className="spacer" />
-        <button className="btn btn-sm btn-ghost btn-danger" onClick={remove}>
-          Delete
-        </button>
-      </div>
-    </article>
+    </section>
   );
 }

@@ -1,10 +1,12 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Figtree, JetBrains_Mono } from "next/font/google";
+import { NewProjectProvider } from "@/components/NewProjectProvider";
 import { RouteBackdrop } from "@/components/RouteBackdrop";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TabBar } from "@/components/TabBar";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 // next/font downloads the fonts at build time and serves them from our own site (no request to Google
@@ -25,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${figtree.variable} ${jetbrainsMono.variable}`}>
       <body>
         {/* One column: backdrop behind everything, header, page, footer, and the phone tab bar stuck to the bottom. */}
+        <NewProjectProvider>
         <div className="relative flex min-h-dvh flex-col">
           <RouteBackdrop />
           <SiteHeader />
@@ -32,6 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SiteFooter />
           <TabBar />
         </div>
+        </NewProjectProvider>
+        <Toaster />
         {/* Vercel Web Analytics: anonymous page views on the live site only (does nothing locally). */}
         <Analytics />
       </body>
