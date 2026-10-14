@@ -1,6 +1,6 @@
 # PRD: FlowPlan
 
-**Author:** Ahmed Malik · **Date:** 2026-10-06 · **Status:** Shipped (v1.1, 2026-10-07) · **Live:** https://flow-plan-five.vercel.app/
+**Author:** Ahmed Malik · **Date:** 2026-10-06 · **Status:** Shipped (v2.0, 2026-10-15) · **Live:** https://flow-plan-five.vercel.app/
 
 ## 1. Problem
 Small teams (student groups, 2–5 person startups, freelancers juggling a client project) plan work in WhatsApp threads, sticky notes or a flat to-do list. A flat list doesn't show which tasks are *blocking* others, so when one slips nobody knows whether the deadline is now at risk until it's too late. Heavy tools like MS Project or Jira Advanced Roadmaps solve this but are expensive, slow to learn, and overkill for a 3-week plan.
@@ -32,6 +32,8 @@ A final-year CS student or junior PM in Lahore planning a 2–6 week project wit
 | 3 | planner | be told clearly when my dependencies form a loop | I don't end up with an impossible plan | Given A→B and B→C, when I make A depend on C, then the change is rejected and an error says "Circular dependency: A → B → C → A"; the plan is left unchanged. |
 | 4 | planner | see the critical path and the slack of every task | I know which tasks I cannot let slip and how much buffer the others have | Given a valid plan, then each task shows earliest start, latest start and slack; tasks with slack 0 are flagged critical; the total project duration is shown. |
 | 5 | planner | see my plan as a Gantt-style timeline with critical tasks highlighted | I can understand the schedule at a glance and screenshot it | Given a valid plan, then each task is a bar starting at its earliest start with length = duration, critical bars use a distinct colour, slack is shown as a faint extension; the chart is readable at 375px width (horizontal scroll inside the chart is OK). |
+
+> **Changed in v2.0:** the Gantt chart was replaced by a flow diagram (each task a station, arrows between tasks that wait for each other, critical path in amber, slack on each task) beside the task list. The Gantt-style timeline is kept on the printed page. The intent of story 5, seeing the schedule at a glance, is unchanged.
 | 6 | returning planner | have my plan saved automatically in the browser | I don't lose work when I close the tab | Given a plan with tasks, when I refresh the page, then the same tasks and dependencies are restored; a "Load sample plan" button and a "Clear plan" button (with confirm) exist. |
 
 ## 5. Success metrics
@@ -67,6 +69,7 @@ The algorithm is pure functions with no React imports, so it's tested with Vites
 - **v0.1 (MVP):** 2026-10-07 — stories 1–6, tests + CI, deployed on Vercel with sample plan.
 - **v1.0:** 2026-10-07 — deployed on Vercel; README with live link, screenshots, Mermaid diagrams and the gist; test plan and test report; tagged release. (Screenshot of my real 3-week plan follows in #10.)
 - **v1.1:** 2026-10-07 — mark tasks as done (progress only, schedule unchanged), notes on tasks, scrolling dependency lists (#14, #15, #16).
+- **v2.0:** 2026-10-15 — full redesign: flow diagram and task list on one page, critical-path-changed note, undo after delete, a phone layout of its own, onboarding, a "How it's built" page, print styles. The scheduling logic and its tests are unchanged (#27–#40).
 - **Later (ideas, not scheduled):** overload warnings per owner, calendar dates + weekends, export as PNG, share via URL.
 
 ## 9. Results (fill after launch)
@@ -77,3 +80,8 @@ The algorithm is pure functions with no React imports, so it's tested with Vites
 - **Defects:** testing found 2 phone-only layout bugs (#11, #13); both fixed before release.
 - **Primary metric (own 3-week plan): met.** My 3-week portfolio sprint is planned in FlowPlan (#10): 11 items, finish Mon 26 Oct 2026 (day 21), all 11 critical, which matches my hand calculation. Insight: with dependencies alone it would take 12 days; the extra 9 days come from one person doing all the work, which makes per-owner overload warnings the top next feature.
 - **Secondary metric (3 hallway testers):** not yet run; protocol in [test plan §8](test-plan.md#8-usability-test-manual).
+
+**As of 2026-10-15 (v2.0):**
+- **Quality (met):** 128 unit tests pass (the original 51 are unchanged); 30 user journeys × 3 environments give 86 passed, 4 skipped by design (cases that only apply to phone or only to a mouse), 0 failed on the local production build. See [test report](test-report.md).
+- **Defects:** testing found 1 phone-only bug in the redesign (#40, a blank plan hid its empty state); fixed before release.
+- **Still to measure:** the hallway usability test is still not run.

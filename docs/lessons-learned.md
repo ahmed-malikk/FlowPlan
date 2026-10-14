@@ -1,6 +1,6 @@
 # Lessons Learned: FlowPlan
 
-**Author:** Ahmed Malik · **Date:** 2026-10-07 · **Project:** FlowPlan v1.1 (project 1 of my 3-week portfolio) · **Live:** https://flow-plan-five.vercel.app
+**Author:** Ahmed Malik · **Date:** 2026-10-15 · **Project:** FlowPlan v2.0 (project 1 of my 3-week portfolio) · **Live:** https://flow-plan-five.vercel.app
 
 What building, testing and shipping FlowPlan taught me, and what I'm changing for the next project.
 
@@ -11,8 +11,8 @@ What building, testing and shipping FlowPlan taught me, and what I'm changing fo
 | Layer | What I used | What I learned |
 |---|---|---|
 | Language | **TypeScript** (strict) | Types catch mistakes before the app runs; `npm run typecheck` is a free safety net |
-| Frontend | **React** components + **Next.js** | Screens are built from reusable pieces (TaskTable, Gantt, SummaryPanel). Next.js turns folders into pages: `app/project/[id]` becomes `/project/123` |
-| Styling | Plain **CSS** | Layout bugs only appear at certain screen sizes. `minmax(0, 1fr)`, `position: relative` and scrolling boxes fixed real problems |
+| Frontend | **React** components + **Next.js** | Screens are built from reusable pieces (TasksList, FlowDiagram, CriticalStrip). Next.js turns folders into pages: `app/project/[id]` becomes `/project/123` |
+| Styling | **Tailwind CSS** and **shadcn/ui** (v2.0; plain CSS in v1) | Layout bugs only appear at certain screen sizes. `minmax(0, 1fr)`, `position: relative` and scrolling boxes fixed real problems in v1; in v2 colours, spacing and motion became named tokens used everywhere |
 | Data | **localStorage**, no backend | A deliberate MVP choice: v1 is single-user, so a server, database or login would add cost and setup with no benefit to the user |
 | Hosting | **Vercel** | Connected once to GitHub; every push to `main` is live in about 20 seconds, with older versions kept for rollback |
 | Testing | **Vitest** (unit) + **Playwright** (system) | Unit tests check the maths; system tests click through the real app in a browser like a user |
@@ -37,7 +37,7 @@ What building, testing and shipping FlowPlan taught me, and what I'm changing fo
 - **Test the live site too.** The same 51 system tests passed against the deployed site, so what users get is what I tested.
 - **Use the product for real.** Loading my own 11-task plan exposed layout problems that small examples never showed.
 
-**Final numbers (v1.1):** 51 / 51 unit tests; 17 system tests × 3 environments = 51 / 51, locally and on the live site. Details: [test plan](test-plan.md) · [test report](test-report.md).
+**Final numbers (v1.1):** 51 / 51 unit tests; 17 system tests × 3 environments = 51 / 51, locally and on the live site. **v2.0:** 128 / 128 unit tests; 30 system tests × 3 environments = 86 passed, 4 skipped by design, 0 failed. Details: [test plan](test-plan.md) · [test report](test-report.md).
 
 ## 4. Git and GitHub
 
@@ -76,9 +76,20 @@ What building, testing and shipping FlowPlan taught me, and what I'm changing fo
 
 - **Plan vs actual:** I committed the features in one batch at the end instead of one by one, and published the issues after the build. Both are recorded as process slips.
 - **Planning my own sprint gave a real insight.** Planned with dependencies alone, my 3-week portfolio takes **12 days**; as one person it takes **21 days**, with **all 11 items critical**. The Critical Path Method assumes unlimited people, so my real constraint is me: any slip moves the final date, my single buffer day matters, and per-person overload warnings are the most useful next feature.
-- **Decide with evidence:** a redesign and sign-in were deferred because no user evidence asked for them yet. The 3-person usability study is how I'll get that evidence.
+- **Decide with evidence:** sign-in was deferred because no user evidence asked for it yet. The 3-person usability study is how I'll get that evidence.
 
-## 8. What I'm changing for the next project (QueueCare)
+
+## 8. The v2.0 redesign: what I learned
+
+- **Logic apart from screens paid off.** I replaced every screen and left `scheduler.ts`, `plan.ts` and their original 51 tests untouched. They still pass, which is the proof that the redesign didn't change what the app calculates.
+- **Approve a mock-up, then build exactly that.** I built a clickable prototype, agreed it, and then compared screenshots of the build against it. The comparison caught what I would have missed: the diagram clipped its last task in a wide window, dates were long, and a footer repeated the header.
+- **Design the phone layout on purpose.** The phone got its own order (Tasks, then the diagram, then the critical path), its own switch and tab bar, and a diagram that runs top to bottom. A squeezed desktop page would not have done that. Checking it at 375 px found one real bug: an empty plan hid its start buttons (#40).
+- **Measure contrast, don't eyeball it.** A unit test now calculates the contrast of every text and background pair, so a colour change that fails WCAG fails the build.
+- **Every animation needs a reason and an off switch.** Motion in FlowPlan shows something (a route drawing in, a pulse down the tasks that wait for an edited one), plays a limited number of times, and has a reduced-motion version.
+- **One feature, one commit, one issue.** This time the board came first and each commit closed its issue, which is what I committed to change after version 1.
+- **Be honest about gaps.** The diagram's lines are paler than I'd like for contrast, the system tests don't run in CI yet, and the usability study is still not done. They are listed in the test report, not hidden.
+
+## 9. What I'm changing for the next project (QueueCare)
 
 1. Set up tooling and the issue board **before day 1**, then commit and push **after every feature**.
 2. Write the PRD and BRD first, and turn user stories into issues straight away.
@@ -90,5 +101,4 @@ What building, testing and shipping FlowPlan taught me, and what I'm changing fo
 ## Still open on FlowPlan
 
 - Usability study with 3 first-time users ([test plan §8](test-plan.md#8-usability-test-manual))
-- Print layout polish
 - A visual GitHub Project board

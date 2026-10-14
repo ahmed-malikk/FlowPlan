@@ -1,4 +1,54 @@
-# Test Report: FlowPlan v1.0
+# Test Report: FlowPlan v2.0
+
+**Author:** Ahmed Malik · **Test date:** 2026-10-15 · **Plan:** [test-plan.md](test-plan.md) · **Issue:** #38
+
+## v2.0 run (2026-10-15): the redesign
+
+Run on the production build of the `redesign-v2` branch (the commit before the merge to `main`), in the same three environments as below: desktop Edge, desktop Chrome and a 375 px phone view. The scheduler's logic and its original tests did not change.
+
+| Level | Cases | Passed | Failed | Skipped |
+|---|---|---|---|---|
+| Unit (Vitest) | 128 | 128 | 0 | 0 |
+| System, 3 environments | 30 × 3 = 90 | 86 | 0 | 4 |
+
+**Unit tests:** 51 from version 1, plus tests for the diagram layout and geometry, the critical-path change note, the status line, short dates, the timeline ticks, the algorithm explainer, the scroll route, one-time hints and navigation, and a test that measures the WCAG contrast of every text and background colour pair.
+
+**System tests:** ST-01 to ST-17 keep their numbers and intent but drive the new screens (the New project dialog, the quick-add bar, the task list, the diagram and the edit dialog). ST-18 to ST-30 are new:
+
+| ID | Test case |
+|---|---|
+| ST-18 | The status line, the critical path note and the plan-complete moment |
+| ST-19 | The edit dialog is a real dialog: focus moves in, Escape closes, focus returns |
+| ST-20 | The edit dialog saves name, days, owner and several waits-for |
+| ST-21 | The Waits for control says it once and lists only task names |
+| ST-22 | The header opens New project from any page |
+| ST-23 | How it's built: complete, with a working algorithm explainer |
+| ST-24 | Print: a light page with the tasks and the timeline, without the screen-only parts |
+| ST-25 | The tab bar and the Tasks / Diagram switch exist on a phone only |
+| ST-26 | On a phone the diagram runs top to bottom and swiping a row marks it done |
+| ST-27 | Pointing at a task lights what it waits for and what waits for it |
+| ST-28 | Tapping a task never leaves the others dimmed |
+| ST-29 | The tour shows once, is skippable, and does not return after a reload |
+| ST-30 | The slack tip explains itself once on hover, and on a tap or click any time |
+
+**Skipped on purpose (4):** ST-26 is phone-only, so it is skipped in Edge and Chrome on desktop; ST-27 and ST-30 need a mouse to hover, so they are skipped in the phone view.
+
+**Defects found by testing:** 1.
+
+| ID | Found by | Description | Severity | Fix | Status |
+|---|---|---|---|---|---|
+| [#40](https://github.com/ahmed-malikk/FlowPlan/issues/40) | Checking the phone layout against the empty-plan screen | On a phone a plan with no tasks hid its empty state and start buttons behind the Tasks / Diagram switch | Medium | `9cd16bd`: the empty state also shows inside the Tasks card on narrow screens | ✅ Fixed, covered by ST-02 |
+
+**Found while comparing the build with the approved prototype** (before release, so not logged as defects): the flow diagram clipped its last task at a 1440 px window, task rows carried long dates, and a footer repeated the header's links. Fixed in `c35552e`, checked by a new unit test that sizes the diagram for boards 700 to 1000 px wide and by screenshots of the desktop and phone layouts.
+
+**Not covered:** Safari and Firefox; the usability test with first-time users; a manual check on a real phone. The system tests are not run in CI (only typecheck, unit tests and the build are). After the release the same system tests are run against the live site; the result is added below.
+
+The sections below are the v1.0 and v1.1 reports, kept as a record.
+
+---
+
+
+# Test Report: FlowPlan v1.0 and v1.1
 
 **Author:** Ahmed Malik · **Test date:** 2026-10-07 · **Plan:** [test-plan.md](test-plan.md) · **Issue:** #12
 
