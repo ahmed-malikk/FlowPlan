@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Gantt } from "@/components/Gantt";
 import { PlanHeader } from "@/components/PlanHeader";
 import { QuickAdd } from "@/components/QuickAdd";
-import { TaskTable } from "@/components/TaskTable";
+import { EditSheet } from "@/components/EditSheet";
+import { TasksList } from "@/components/TasksList";
 import { Button } from "@/components/ui/button";
 import { ViewSwitch, type View } from "@/components/ViewSwitch";
 import { removeTask, setDone, setDuration, upsertTask } from "@/lib/plan";
@@ -49,6 +50,8 @@ function ProjectView({ project }: { project: Project }) {
   useEffect(() => rememberPlan(project.id), [project.id]);
 
   const [view, setView] = useState<View>("tasks");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const editOpener = useRef<HTMLElement | null>(null); // gets focus back when the edit dialog closes
   const result = useMemo(() => schedule(project), [project]);
   const scheduled = useMemo(() => (result.ok ? new Map(result.tasks.map((t) => [t.id, t])) : null), [result]);
   const status = statusLine(project.startDate, project.tasks, result);
@@ -57,6 +60,15 @@ function ProjectView({ project }: { project: Project }) {
 
   const update = (change: (p: Project) => Project) => updateProject(project.id, change);
   const setTasks = (change: (tasks: Task[]) => Task[]) => update((p) => ({ ...p, tasks: change(p.tasks) }));
+
+  /** Deleting a task is never final: the toast offers Undo and restores the whole task list. */
+  function removeTaskWithUndo(taskId: string) {
+    const before = project.tasks;
+    const name = before.find((t) => t.id === taskId)?.name ?? "task";
+    setEditingId(null);
+    setTasks((ts) => removeTask(ts, taskId));
+    toast(`Deleted "${name}"`, { action: { label: "Undo", onClick: () => setTasks(() => before) } });
+  }
 
   function remove() {
     const snapshot = project;
@@ -96,14 +108,17 @@ function ProjectView({ project }: { project: Project }) {
         <section id="tasks-card" aria-label="Tasks" className={cn(CARD, view === "diagram" && "max-[900px]:hidden")}>
           <h2 className="mb-1.5 text-[17px] font-bold tracking-tight">Tasks</h2>
           {hasTasks ? (
-            <TaskTable
+            <TasksList
               tasks={project.tasks}
               scheduled={scheduled}
               startDate={project.startDate}
-              onSave={(task) => setTasks((ts) => upsertTask(ts, task))}
-              onDelete={(taskId) => setTasks((ts) => removeTask(ts, taskId))}
               onDuration={(taskId, d) => setTasks((ts) => setDuration(ts, taskId, d))}
               onDone={(taskId, done) => setTasks((ts) => setDone(ts, taskId, done))}
+              onEdit={(id, opener) => {
+                editOpener.current = opener;
+                setEditingId(id);
+              }}
+              onDelete={removeTaskWithUndo}
             />
           ) : (
             <p className="mt-3 text-muted-foreground">Tasks you add appear here with what they wait for and how much slack they have.</p>
@@ -122,6 +137,18 @@ function ProjectView({ project }: { project: Project }) {
           )}
         </section>
       </div>
+
+      <EditSheet
+        task={project.tasks.find((t) => t.id === editingId) ?? null}
+        tasks={project.tasks}
+        onClose={() => setEditingId(null)}
+        onSave={(task) => setTasks((ts) => upsertTask(ts, task))}
+        onDelete={removeTaskWithUndo}
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          editOpener.current?.focus();
+        }}
+      />
     </div>
   );
 }
