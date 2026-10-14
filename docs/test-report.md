@@ -8,8 +8,8 @@ Run on the production build of the `redesign-v2` branch (the commit before the m
 
 | Level | Cases | Passed | Failed | Skipped |
 |---|---|---|---|---|
-| Unit (Vitest) | 128 | 128 | 0 | 0 |
-| System, 3 environments | 31 × 3 = 93 | 89 | 0 | 4 |
+| Unit (Vitest) | 129 | 129 | 0 | 0 |
+| System, 3 environments | 33 × 3 = 99 | 93 | 0 | 6 |
 
 **Unit tests:** 51 from version 1, plus tests for the diagram layout and geometry, the critical-path change note, the status line, short dates, the timeline ticks, the algorithm explainer, the scroll route, one-time hints and navigation, and a test that measures the WCAG contrast of every text and background colour pair.
 
