@@ -526,4 +526,35 @@ test.describe("first visit", () => {
     await chip.click();
     await expect(page.getByText(/this task can start up to/)).toBeVisible();
   });
+
+  test("ST-31 while the tour is open the page is frozen and only the tour box works", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Add the example project" }).click();
+    const tour = page.getByRole("dialog");
+    await expect(tour).toBeVisible({ timeout: 6000 });
+    await expect(tour.getByRole("heading")).toHaveText("Add a task");
+    const html = page.locator("html");
+    await expect(html).toHaveCSS("overflow", "hidden");
+
+    // the wheel does not move the page, and a click on the dimmed page does nothing
+    const y = await page.evaluate(() => window.scrollY);
+    await page.mouse.move(200, 400);
+    await page.mouse.wheel(0, 700);
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => window.scrollY)).toBe(y);
+    await page.mouse.click(8, 400);
+    await expect(tour.getByRole("heading")).toHaveText("Add a task");
+
+    // Next moves to the next box; the box is only usable once it has settled
+    await tour.getByRole("button", { name: "Next" }).click();
+    await expect(tour.getByRole("heading")).toHaveText("Try what-if");
+    await tour.getByRole("button", { name: "Next" }).click();
+    await expect(tour.getByRole("heading")).toHaveText("Follow the amber path");
+    await expect(tour.getByRole("button", { name: "Done" })).toBeVisible();
+
+    // finishing gives the page back
+    await tour.getByRole("button", { name: "Done" }).click();
+    await expect(tour).toBeHidden();
+    await expect(html).not.toHaveCSS("overflow", "hidden");
+  });
 });
