@@ -96,7 +96,14 @@ export function FlowDiagram({ tasks, finish, highlightId, ripple, lastAddedId, o
 
       {geo && (
         <>
-          <svg width={geo.width} height={geo.height} className="absolute top-0 left-0" aria-hidden="true">
+          {/* Exactly as big as the board unless the route really needs more room: a size copied from the board's rounded
+              pixels can end up a fraction too big, which adds a scrollbar, which resizes the board, and so on forever. */}
+          <svg
+            width={geo.width > size.width ? geo.width : "100%"}
+            height={geo.vertical || geo.height > size.height ? geo.height : "100%"}
+            className="absolute top-0 left-0"
+            aria-hidden="true"
+          >
             <defs>
               <marker id="fp-arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
                 <path d="M0 1L9 5L0 9z" fill="var(--primary)" />

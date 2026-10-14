@@ -16,6 +16,20 @@ function noneOverlap(boxes: Array<{ x: number; y: number; w: number }>) {
   for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) expect(overlap(boxes[i], boxes[j])).toBe(false);
 }
 
+describe("flowGeometry on a short board", () => {
+  it("fits the whole route in a 300 px tall board, so no vertical scrollbar is needed", () => {
+    for (const height of [300, 310, 340, 420]) {
+      const g = flowGeometry(flow, { width: 836, height });
+      expect(g.height).toBe(height);
+      for (const b of Object.values(g.nodes)) {
+        expect(b.y).toBeGreaterThanOrEqual(0);
+        expect(b.y + NODE_H).toBeLessThanOrEqual(height);
+      }
+      noneOverlap(Object.values(g.nodes));
+    }
+  });
+});
+
 describe("flowGeometry on a wide board", () => {
   const g = flowGeometry(flow, { width: 900, height: 420 });
 

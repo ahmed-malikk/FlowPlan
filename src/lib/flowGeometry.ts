@@ -56,7 +56,8 @@ export function flowGeometry(flow: FlowStructure, size: { width: number; height:
     const room = size.width - 48;
     const nodeW = levels * NODE_W + (levels - 1) * 16 <= room ? NODE_W : Math.max(MIN_NODE_W, Math.floor((room - (levels - 1) * 16) / levels));
     const pitch = levels > 1 ? Math.max(nodeW + 16, Math.floor((room - nodeW) / (levels - 1))) : 0;
-    const step = NODE_H + 26;
+    // In a short board the rows move a little closer (never touching) so no vertical scrollbar is needed.
+    const step = Math.min(NODE_H + 26, Math.max(NODE_H + 10, Math.floor((size.height - 20) / flow.maxRows)));
     const contentHeight = flow.maxRows * step + 20;
     height = Math.max(size.height, contentHeight);
     const top = (height - contentHeight) / 2 + 10;

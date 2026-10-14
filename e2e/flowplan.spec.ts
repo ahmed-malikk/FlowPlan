@@ -1,4 +1,4 @@
-import { expect, test as base, type Page } from "@playwright/test";
+import { expect, test as base, type Page, chromium } from "@playwright/test";
 
 /**
  * System test cases from docs/test-plan.md. Each test starts with empty browser storage, so tests
@@ -450,6 +450,40 @@ test("ST-32 resting the pointer on a task's edge does not make the diagram flick
     // it may settle once, but it must not keep flipping
     expect(states.filter((s, i) => i > 0 && s !== states[i - 1]).length).toBeLessThanOrEqual(1);
     expect(states[states.length - 1]).toBe(true);
+  }
+});
+
+// The setup that used to make the diagram flicker forever: classic scrollbars, browser zoom of 80%
+// (fractional pixel sizes) and a short window, with the pointer nowhere near the diagram. Playwright
+// hides scrollbars and cannot zoom per test, so this test starts its own browser with those flags.
+test("ST-33 the diagram settles and stays still at 80% browser zoom with classic scrollbars", async ({ browserName }, info) => {
+  test.skip(info.project.name === "phone-375", "the phone has no classic scrollbars or zoom");
+  const channel = info.project.name === "desktop-chrome" ? "chrome" : "msedge";
+  const browser = await chromium.launch({
+    channel,
+    ignoreDefaultArgs: ["--hide-scrollbars"],
+    args: ["--force-device-scale-factor=0.8", "--window-size=1366,700"],
+  });
+  try {
+    const context = await browser.newContext({ viewport: null, baseURL: info.project.use.baseURL });
+    await context.addInitScript(() => localStorage.setItem("flowplan:seen:tour", "1"));
+    const page = await context.newPage();
+    await page.goto("/");
+    await page.getByRole("button", { name: "Add the example project" }).click();
+    await page.waitForTimeout(2500);
+    await page.mouse.move(2, 2);
+    const resizes = await page.evaluate(
+      () =>
+        new Promise<number>((resolve) => {
+          const board = document.querySelector("[data-flow-board]")!;
+          let count = 0;
+          new ResizeObserver(() => count++).observe(board);
+          setTimeout(() => resolve(count), 3000);
+        }),
+    );
+    expect(resizes).toBeLessThanOrEqual(2); // one report when it starts watching, never a loop
+  } finally {
+    await browser.close();
   }
 });
 
