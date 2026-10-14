@@ -1,4 +1,4 @@
-import { endDateOf, formatDate, startDateOf } from "@/lib/plan";
+import { endDateOf, formatDateRange, startDateOf } from "@/lib/plan";
 import type { ScheduledTask } from "@/lib/scheduler";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +41,7 @@ export function CriticalStrip({ tasks, startDate }: { tasks: ScheduledTask[]; st
               {t.done && <span className="sr-only"> (done)</span>}
             </span>
             <span className="block font-mono text-xs text-muted-foreground">
-              {formatDate(startDateOf(startDate, t.es), false)} to {formatDate(endDateOf(startDate, t.ef), false)}
+              {formatDateRange(startDateOf(startDate, t.es), endDateOf(startDate, t.ef))}
             </span>
           </li>
         ))}

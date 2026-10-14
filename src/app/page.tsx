@@ -26,7 +26,7 @@ export default function ProjectsPage() {
       <div className="fp-enter">
         <h1 className="text-[clamp(30px,4.4vw,46px)] leading-[1.05] font-semibold tracking-tight">Your plans</h1>
         <p className="mt-2.5 max-w-[56ch] text-muted-foreground">
-          Saved in this browser. Open a plan to see its critical path, the finish date and how much every task can slip.
+          Saved in this browser. Open a plan to see its critical path.
         </p>
       </div>
 
@@ -48,8 +48,7 @@ export default function ProjectsPage() {
           </div>
         </div>
       ) : (
-        <>
-          <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(270px,1fr))]">
+        <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(270px,1fr))]">
             {projects.map((p, i) => (
               <ProjectCard key={p.id} project={p} index={i} />
             ))}
@@ -63,14 +62,6 @@ export default function ProjectsPage() {
               </span>
             </button>
           </div>
-          <button
-            type="button"
-            onClick={openExample}
-            className="mt-3 rounded-md px-1 py-3 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
-          >
-            Add the example project
-          </button>
-        </>
       )}
     </section>
   );

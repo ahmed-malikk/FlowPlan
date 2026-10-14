@@ -2,7 +2,7 @@
 
 import { Minus, Plus } from "lucide-react";
 import { useRef } from "react";
-import { endDateOf, formatDate, MAX_DURATION, startDateOf } from "@/lib/plan";
+import { endDateOf, formatDateRange, MAX_DURATION, startDateOf } from "@/lib/plan";
 import { SlackChip } from "@/components/SlackChip";
 import type { ScheduledTask, Task } from "@/lib/scheduler";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,13 @@ export function TasksList({ tasks, scheduled, startDate, onDuration, onDone, onE
   const names = new Map(tasks.map((t) => [t.id, t.name]));
 
   return (
+    <>
+    <div aria-hidden="true" className="grid grid-cols-[44px_1fr_90px_44px] gap-x-2 border-b border-border pb-2 text-xs text-muted-foreground max-[520px]:hidden print:hidden">
+      <span />
+      <span>Task</span>
+      <span>Days</span>
+      <span />
+    </div>
     <ul className="print-exact m-0 list-none p-0" onMouseLeave={() => onHighlight?.(null)}>
       {tasks.map((task) => (
         <TaskRow
@@ -43,6 +50,7 @@ export function TasksList({ tasks, scheduled, startDate, onDuration, onDone, onE
         />
       ))}
     </ul>
+    </>
   );
 }
 
@@ -71,7 +79,7 @@ function TaskRow({
   const swipe = useSwipe(row, () => onDone(task.id, !task.done), () => onDelete(task.id));
 
   const when = timing
-    ? `${formatDate(startDateOf(startDate, timing.es), false)} to ${formatDate(endDateOf(startDate, timing.ef), false)}`
+    ? formatDateRange(startDateOf(startDate, timing.es), endDateOf(startDate, timing.ef))
     : null;
   const sub = [task.owner, waitsFor.length ? `after ${waitsFor.join(", ")}` : "starts on day 0", when].filter(Boolean).join(", ");
 
@@ -80,7 +88,7 @@ function TaskRow({
       ref={row}
       data-id={task.id}
       {...swipe}
-      className="grid touch-pan-y grid-cols-[44px_1fr_auto_auto] items-center gap-x-2 border-b border-border/70 py-2.5 max-[520px]:grid-cols-[44px_1fr_auto] print:grid-cols-[1fr_auto]"
+      className="grid touch-pan-y grid-cols-[44px_1fr_90px_44px] items-center gap-x-2 border-b border-border/70 py-2.5 max-[520px]:grid-cols-[44px_1fr_auto] print:grid-cols-[1fr_auto]"
       onMouseEnter={() => onHighlight?.(task.id)}
       onFocus={(e) => e.target.matches(":focus-visible") && onHighlight?.(task.id)}
       onBlur={() => onHighlight?.(null)}
@@ -138,7 +146,7 @@ function TaskRow({
 /** The what-if control: one day more or less, so the whole plan can be tried out. */
 function Stepper({ name, value, onChange, className }: { name: string; value: number; onChange: (d: number) => void; className?: string }) {
   const btn =
-    "grid size-[30px] place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-35 max-[520px]:size-10";
+    "grid size-[30px] place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-35 max-[520px]:size-11";
   return (
     <span className={cn("inline-flex items-center rounded-full border border-input", className)}>
       <button type="button" className={btn} disabled={value <= 1} aria-label={`One day less for ${name}`} onClick={() => onChange(value - 1)}>

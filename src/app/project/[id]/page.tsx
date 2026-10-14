@@ -54,6 +54,14 @@ function ProjectView({ project }: { project: Project }) {
   const router = useRouter();
   // The phone tab bar offers a shortcut back to the plan you had open.
   useEffect(() => rememberPlan(project.id), [project.id]);
+  // A tab, a bookmark and a screen reader should say which plan this is.
+  useEffect(() => {
+    const before = document.title;
+    document.title = `${project.name || "Untitled project"} · FlowPlan`;
+    return () => {
+      document.title = before;
+    };
+  }, [project.name]);
 
   const [view, setView] = useState<View>("tasks");
   const [tourOpen, setTourOpen] = useState(false);
@@ -81,7 +89,11 @@ function ProjectView({ project }: { project: Project }) {
   // First visit to a plan that has tasks: offer the tour once, after the page has settled.
   useEffect(() => {
     if (project.tasks.length === 0 || hasSeen("tour")) return;
-    const timer = setTimeout(() => setTourOpen(true), 1800);
+    const timer = setTimeout(() => {
+      // Never take the keyboard away from someone who has already started typing.
+      const typing = document.activeElement instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      if (!typing) setTourOpen(true);
+    }, 1800);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only on arrival, not whenever tasks change
   }, []);
@@ -115,6 +127,22 @@ function ProjectView({ project }: { project: Project }) {
 
   return (
     <div className="py-6 min-[521px]:py-8">
+      {hasTasks && (
+        <div className="max-[900px]:hidden">
+          {[
+            ["#tasks-card", "Skip to tasks"],
+            ["#flow-card", "Skip to diagram"],
+          ].map(([href, label]) => (
+            <a
+              key={href}
+              href={href}
+              className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-90 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:font-semibold focus:text-primary-foreground"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      )}
       <PlanHeader
         name={project.name}
         startDate={project.startDate}
@@ -143,7 +171,20 @@ function ProjectView({ project }: { project: Project }) {
       {/* Two cards of equal height side by side; on a phone one at a time, Tasks first. */}
       <div className="grid grid-cols-[minmax(0,1fr)] gap-[18px] min-[901px]:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
         <section id="tasks-card" aria-label="Tasks" className={cn(CARD, "p-[18px] min-[901px]:overflow-auto print:max-h-none print:overflow-visible print:border-0 print:p-0", view === "diagram" && "max-[900px]:hidden print:block")}>
-          <h2 className="mb-1.5 text-[17px] font-bold tracking-tight">Tasks</h2>
+          <div className="mb-1.5 flex items-baseline justify-between gap-2">
+            <h2 className="text-[17px] font-bold tracking-tight">Tasks</h2>
+            {/* Phones and tablets show one card at a time, so the way to the diagram is one tap. */}
+            <button
+              type="button"
+              onClick={() => {
+                setView("diagram");
+                requestAnimationFrame(() => document.getElementById("flow-card")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+              }}
+              className="min-h-11 rounded-md px-1 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground min-[901px]:hidden print:hidden"
+            >
+              Jump to diagram
+            </button>
+          </div>
           {hasTasks ? (
             <TasksList
               tasks={project.tasks}

@@ -139,6 +139,16 @@ export function formatDate(iso: string, withYear = true): string {
   });
 }
 
+/** "19 Oct": day and month only, as in the design. */
+export function formatShortDate(iso: string): string {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+}
+
+/** "19 Oct to 21 Oct", or just "20 Oct" for something that starts and ends on the same day. */
+export function formatDateRange(from: string, to: string): string {
+  return from === to ? formatShortDate(from) : `${formatShortDate(from)} to ${formatShortDate(to)}`;
+}
+
 export function todayIso(): string {
   const now = new Date();
   const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);

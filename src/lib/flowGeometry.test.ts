@@ -45,6 +45,15 @@ describe("flowGeometry on a wide board", () => {
     expect(g.edges.every((e) => e.d.startsWith("M"))).toBe(true);
   });
 
+  it("fits the whole route on a laptop-width board, narrowing the nodes rather than scrolling", () => {
+    for (const width of [700, 800, 840, 1000]) {
+      const fit = flowGeometry(flow, { width, height: 420 });
+      expect(fit.width, `board ${width}`).toBe(width);
+      const right = Math.max(...Object.values(fit.nodes).map((b) => b.x + b.w));
+      expect(right, `board ${width}`).toBeLessThanOrEqual(width);
+    }
+  });
+
   it("grows wider than the board when there is not room, so the board scrolls instead of squeezing", () => {
     const tight = flowGeometry(flow, { width: VERTICAL_BELOW, height: 420 });
     expect(tight.vertical).toBe(false);

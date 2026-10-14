@@ -44,7 +44,7 @@ export function WaitsForOptions({ tasks, value, onChange, selfId, disabledReason
             key={t.id}
             className={cn(
               "flex min-h-11 items-start gap-3 rounded-lg px-2.5 py-2 text-sm md:min-h-10",
-              reason ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-secondary",
+              reason ? "cursor-not-allowed" : "cursor-pointer hover:bg-secondary",
             )}
           >
             <input
@@ -55,7 +55,7 @@ export function WaitsForOptions({ tasks, value, onChange, selfId, disabledReason
               onChange={(e) => toggle(t.id, e.target.checked)}
             />
             <span className="min-w-0">
-              <span className="block break-words">{t.name}</span>
+              <span className={cn("block break-words", reason && "opacity-60")}>{t.name}</span>
               {reason && <span className="block text-xs text-muted-foreground">Would create a loop: {reason}</span>}
             </span>
           </label>

@@ -3,6 +3,8 @@ import {
   addDays,
   dependentsOf,
   endDateOf,
+  formatDateRange,
+  formatShortDate,
   exampleProject,
   loopIfWaitsFor,
   removeTask,
@@ -243,5 +245,17 @@ describe("loopIfWaitsFor", () => {
     const before = JSON.stringify(chain);
     loopIfWaitsFor(chain, "a", "c");
     expect(JSON.stringify(chain)).toBe(before);
+  });
+});
+
+describe("short dates", () => {
+  it("shows day and month only", () => {
+    expect(formatShortDate("2026-10-19")).toBe("19 Oct");
+    expect(formatShortDate("2026-12-01")).toBe("1 Dec");
+  });
+
+  it("shows a range, or one date for a one-day task", () => {
+    expect(formatDateRange("2026-10-19", "2026-10-21")).toBe("19 Oct to 21 Oct");
+    expect(formatDateRange("2026-10-20", "2026-10-20")).toBe("20 Oct");
   });
 });

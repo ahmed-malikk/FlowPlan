@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "sonner";
 import { MiniRoute } from "@/components/MiniRoute";
-import { endDateOf, formatDate } from "@/lib/plan";
+import { endDateOf, formatShortDate } from "@/lib/plan";
 import { schedule, type Project } from "@/lib/scheduler";
 import { addProject, deleteProject } from "@/lib/storage";
 import { navigateWithRouteTransition } from "@/lib/viewTransition";
@@ -19,7 +19,6 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
   const router = useRouter();
   const routeRef = useRef<SVGSVGElement>(null);
   const result = schedule(project);
-  const done = project.tasks.filter((t) => t.done).length;
   const href = `/project/${project.id}`;
 
   function open(e: React.MouseEvent<HTMLAnchorElement>) {
@@ -49,8 +48,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
       {result.ok ? (
         <p className="mt-0.5 text-sm text-muted-foreground">
           {project.tasks.length} {project.tasks.length === 1 ? "task" : "tasks"}
-          {result.finish > 0 && <>, finishes {formatDate(endDateOf(project.startDate, result.finish), false)}</>}
-          {project.tasks.length > 0 && <>, {done} done</>}
+          {result.finish > 0 && <>, finishes {formatShortDate(endDateOf(project.startDate, result.finish))}</>}
         </p>
       ) : (
         <p className="mt-0.5 text-sm font-semibold text-destructive">Has a circular dependency</p>

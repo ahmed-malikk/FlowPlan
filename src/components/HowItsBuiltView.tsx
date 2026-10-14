@@ -9,7 +9,7 @@ import { routeProgress, stationReached } from "@/lib/scrollRoute";
 const SECTION =
   "relative mb-14 before:absolute before:top-[5px] before:-left-[50px] before:size-[15px] before:rounded-full before:border-[3px] before:border-line-strong before:bg-g1 before:transition-colors before:duration-500 before:content-[''] data-[reached]:before:border-primary data-[reached]:before:bg-primary max-[520px]:before:-left-8";
 const H2 = "mb-2.5 text-2xl font-semibold tracking-tight";
-const P = "mb-3 max-w-[62ch] text-[#cfd9f3]";
+const P = "mb-3 max-w-[62ch] text-body-text";
 
 /**
  * The page for people who want to know how FlowPlan was made. A route runs down the left side and
@@ -41,7 +41,7 @@ export function HowItsBuiltView() {
 
   const paragraphs = (items: string[]) => items.map((text) => <p key={text} className={P}>{text}</p>);
   const bullets = (items: string[]) => (
-    <ul className="m-0 max-w-[62ch] list-disc pl-5 text-[#cfd9f3]">
+    <ul className="m-0 max-w-[62ch] list-disc pl-5 text-body-text">
       {items.map((text) => (
         <li key={text} className="mb-1.5">
           {text}

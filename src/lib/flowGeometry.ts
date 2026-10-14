@@ -7,6 +7,7 @@ import type { FlowStructure } from "./flowLayout";
 
 export const NODE_W = 146;
 export const NODE_H = 72;
+export const MIN_NODE_W = 112; // nodes shrink to this before the board starts to scroll
 export const VERTICAL_BELOW = 560; // board width in px under which the diagram turns top to bottom
 
 export type Box = { x: number; y: number; w: number };
@@ -49,14 +50,19 @@ export function flowGeometry(flow: FlowStructure, size: { width: number; height:
       nodes[n.id] = { x: (size.width - rowWidth) / 2 + col * (w + gap), y: 18 + (firstLine.get(n.level)! + line) * step, w };
     }
   } else {
-    const gap = Math.max(NODE_W + 16, Math.floor((size.width - 48 - NODE_W) / Math.max(1, flow.levels - 1)));
+    // Same layout as the design: full-size nodes spread across the board. When five or more levels would
+    // not fit, the nodes narrow (never below MIN_NODE_W) so the whole route is visible; only then does it scroll.
+    const levels = Math.max(1, flow.levels);
+    const room = size.width - 48;
+    const nodeW = levels * NODE_W + (levels - 1) * 16 <= room ? NODE_W : Math.max(MIN_NODE_W, Math.floor((room - (levels - 1) * 16) / levels));
+    const pitch = levels > 1 ? Math.max(nodeW + 16, Math.floor((room - nodeW) / (levels - 1))) : 0;
     const step = NODE_H + 26;
     const contentHeight = flow.maxRows * step + 20;
     height = Math.max(size.height, contentHeight);
     const top = (height - contentHeight) / 2 + 10;
-    width = Math.max(size.width, 24 + Math.max(0, flow.levels - 1) * gap + NODE_W + 24);
+    width = Math.max(size.width, 24 + (levels - 1) * pitch + nodeW + 24);
     for (const n of flow.nodes) {
-      nodes[n.id] = { x: 24 + n.level * gap, y: top + ((flow.maxRows - n.rowsInLevel) * step) / 2 + n.row * step, w: NODE_W };
+      nodes[n.id] = { x: 24 + n.level * pitch, y: top + ((flow.maxRows - n.rowsInLevel) * step) / 2 + n.row * step, w: nodeW };
     }
   }
 

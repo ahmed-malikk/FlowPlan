@@ -102,6 +102,8 @@ export function FlowDiagram({ tasks, finish, highlightId, ripple, lastAddedId, o
                   {e.critical && (
                     <circle r="4" fill="var(--amber-text)" className="motion-reduce:hidden" aria-hidden="true">
                       <animateMotion dur="2.4s" begin={`${(e.level * 0.5).toFixed(1)}s`} repeatCount="4" path={e.d} />
+                      {/* After its four loops the dot disappears instead of snapping back to the corner. */}
+                      <set attributeName="opacity" to="0" begin={`${(e.level * 0.5 + 9.6).toFixed(1)}s`} fill="freeze" />
                     </circle>
                   )}
                 </g>

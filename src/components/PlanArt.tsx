@@ -32,6 +32,7 @@ export function PlanArt({ complete }: { complete: boolean }) {
       </g>
       <circle r="4.5" fill="var(--amber-text)" className="motion-reduce:hidden">
         <animateMotion dur="4.5s" repeatCount="3" path={route} />
+        <set attributeName="opacity" to="0" begin="13.5s" fill="freeze" />
       </circle>
     </svg>
   );

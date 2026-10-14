@@ -29,7 +29,7 @@ export function SlackChip({ days }: { days: number }) {
         onPointerEnter={(e) => e.pointerType === "mouse" && show(true)}
         onFocus={(e) => e.currentTarget.matches(":focus-visible") && show(true)}
         onClick={() => markSeen("slack-tip")}
-        className="inline-flex cursor-help rounded-full border border-border bg-secondary px-2.5 py-0.5 text-xs whitespace-nowrap"
+        className="relative inline-flex cursor-help rounded-full border border-border bg-secondary px-2.5 py-0.5 text-xs whitespace-nowrap after:absolute after:inset-x-0 after:-inset-y-3 after:content-['']"
         aria-label={`${days} days slack. What is slack?`}
       >
         {days}d slack

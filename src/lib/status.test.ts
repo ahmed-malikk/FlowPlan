@@ -16,7 +16,7 @@ describe("statusLine", () => {
   it("reports the finish date, critical count and progress for the example plan", () => {
     const project = exampleProject(START);
     const s = statusLine(START, project.tasks, schedule(project));
-    expect(s.finishDate).toBe("Sun 25 Oct");
+    expect(s.finishDate).toBe("25 Oct");
     expect(s.text).toBe("Finishes on day 12. 5 of 7 tasks are critical, 0 done.");
   });
 
