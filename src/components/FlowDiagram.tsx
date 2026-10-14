@@ -148,7 +148,7 @@ export function FlowDiagram({ tasks, finish, highlightId, ripple, lastAddedId, o
                 title={t.name}
                 aria-label={`${t.name}, day ${t.es} to ${t.ef}, ${t.critical ? "critical" : `${t.slack} days slack`}${t.done ? ", done" : ""}. Edit`}
                 className={cn(
-                  "absolute overflow-hidden rounded-[14px] border bg-surface-2 px-3 pt-[9px] text-left transition-[border-color,box-shadow,opacity,translate] duration-300 ease-(--ease-out-soft) hover:-translate-y-[3px] motion-reduce:hover:translate-y-0",
+                  "absolute overflow-hidden rounded-[14px] border bg-surface-2 px-3 pt-[9px] text-left transition-[border-color,box-shadow,opacity,scale] duration-300 ease-(--ease-out-soft) hover:scale-[1.04] motion-reduce:hover:scale-100",
                   t.critical ? "border-primary shadow-[0_0_0_3px_var(--amber-soft)]" : "border-line-strong",
                   t.done && "opacity-80",
                   dim && "opacity-30",

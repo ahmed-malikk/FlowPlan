@@ -433,6 +433,26 @@ test("ST-24 print: the page keeps the app's look (dark page, header, diagram, ti
   expect(look.adjust).toBe("exact");
 });
 
+test("ST-32 resting the pointer on a task's edge does not make the diagram flicker", async ({ page }) => {
+  test.skip(isNarrow(page), "hover needs a mouse");
+  await openExample(page);
+  const node = page.locator("#flow-card [data-flow-board] button", { hasText: "Frontend" });
+  await page.waitForTimeout(1500); // the nodes finish drawing in before we measure
+  const box = (await node.boundingBox())!;
+  for (const fromBottom of [1, 2.5]) {
+    await page.mouse.move(box.x + box.width / 2, box.y - 30);
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height - fromBottom);
+    const states: boolean[] = [];
+    for (let i = 0; i < 20; i++) {
+      await page.waitForTimeout(50);
+      states.push(await node.evaluate((el) => el.matches(":hover")));
+    }
+    // it may settle once, but it must not keep flipping
+    expect(states.filter((s, i) => i > 0 && s !== states[i - 1]).length).toBeLessThanOrEqual(1);
+    expect(states[states.length - 1]).toBe(true);
+  }
+});
+
 test("ST-25 the tab bar and the Tasks | Diagram switch exist on a phone only", async ({ page }) => {
   await openExample(page);
   const tabbar = page.getByRole("navigation", { name: "Sections" });
