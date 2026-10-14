@@ -9,6 +9,7 @@ import { TaskForm } from "@/components/TaskForm";
 import { TaskTable } from "@/components/TaskTable";
 import { endDateOf, formatDate, isIsoDate, removeTask, setDone, setDuration, upsertTask } from "@/lib/plan";
 import { schedule, type Project, type Task } from "@/lib/scheduler";
+import { rememberPlan } from "@/lib/nav";
 import { deleteProject, updateProject } from "@/lib/storage";
 import { useProjects } from "@/lib/useProjects";
 
@@ -39,6 +40,8 @@ export default function ProjectPage() {
 
 function ProjectView({ project }: { project: Project }) {
   const router = useRouter();
+  // The phone tab bar offers a shortcut back to the plan you had open.
+  useEffect(() => rememberPlan(project.id), [project.id]);
   const [view, setView] = useState<View>("tasks");
   const result = useMemo(() => schedule(project), [project]);
   const scheduled = useMemo(() => (result.ok ? new Map(result.tasks.map((t) => [t.id, t])) : null), [result]);

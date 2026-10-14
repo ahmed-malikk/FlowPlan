@@ -1,8 +1,11 @@
+/* Layer order: the old stylesheet sits below components and utilities, so new Tailwind classes always win. */
+@layer theme, base, legacy, components, utilities;
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 /* Pre-redesign components keep working while each piece moves over (issues #28 to #36). */
-@import "./legacy.css";
+@import "./legacy.css" layer(legacy);
 
 /*
  * FlowPlan design tokens: dark navy with amber.
@@ -143,7 +146,23 @@
   100% { box-shadow: 0 0 0 16px rgba(224, 136, 62, 0); }
 }
 
+@keyframes fp-dot-pop {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: none; }
+}
+
 @layer utilities {
+  /* The logo route draws itself, then its two stations pop in. */
+  .fp-logo-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: fp-draw 0.8s var(--ease-out-soft) 0.1s forwards;
+  }
+  .fp-dot-pop {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: fp-dot-pop 0.4s var(--ease-out-soft) both;
+  }
   .fp-enter {
     animation: fp-enter 0.55s var(--ease-out-soft) both;
   }
@@ -165,7 +184,8 @@
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .fp-draw {
+  .fp-draw,
+  .fp-logo-line {
     stroke-dashoffset: 0;
   }
 }

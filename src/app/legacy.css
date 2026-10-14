@@ -29,16 +29,8 @@ a { color: var(--lg-accent); }
 
 .container { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
 
-/* ---- Header / footer ---- */
-.site-header { background: var(--lg-surface); border-bottom: 1px solid var(--lg-border); }
-.site-header-inner { display: flex; align-items: center; gap: 16px; height: 56px; }
-.brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--lg-text); text-decoration: none; }
-.brand-mark svg { fill: var(--lg-critical); stroke: var(--lg-critical); display: block; }
-.tagline { color: var(--lg-muted); font-size: 13px; }
-.site-footer { color: var(--lg-muted); font-size: 13px; padding-top: 32px; padding-bottom: 32px; }
 main.container { padding-top: 24px; }
 
-@media (max-width: 600px) { .tagline { display: none; } }
 
 /* ---- Typography ---- */
 h1 { font-size: 26px; line-height: 1.2; margin: 0; }
@@ -216,7 +208,7 @@ table.tasks td.num > div:first-child { white-space: nowrap; }
 
 /* ---- Print: "Export or screenshot the plan" ---- */
 @media print {
-  .site-header, .site-footer, .no-print, .tabs, .actions { display: none !important; }
+  .no-print, .tabs, .actions { display: none !important; }
   body { background: #fff; }
   .card { box-shadow: none; }
   .layout { grid-template-columns: 1fr; }
