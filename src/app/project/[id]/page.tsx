@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { CriticalNote } from "@/components/CriticalNote";
+import { CriticalStrip } from "@/components/CriticalStrip";
 import { FlowDiagram } from "@/components/FlowDiagram";
 import { Gantt } from "@/components/Gantt";
 import { PlanHeader } from "@/components/PlanHeader";
@@ -62,6 +64,13 @@ function ProjectView({ project }: { project: Project }) {
   const hasTasks = project.tasks.length > 0;
   const complete = hasTasks && project.tasks.every((t) => t.done);
 
+  // Plan complete: say so once when the last task is ticked. Un-ticking one re-arms it.
+  const wasComplete = useRef(complete);
+  useEffect(() => {
+    if (complete && !wasComplete.current) toast("Plan complete. Every task is done.");
+    wasComplete.current = complete;
+  }, [complete]);
+
   const update = (change: (p: Project) => Project) => updateProject(project.id, change);
   const setTasks = (change: (tasks: Task[]) => Task[]) => update((p) => ({ ...p, tasks: change(p.tasks) }));
 
@@ -102,6 +111,8 @@ function ProjectView({ project }: { project: Project }) {
         onPrint={() => window.print()}
         onDelete={remove}
       />
+
+      <CriticalNote tasks={result.ok ? result.tasks : null} />
 
       <QuickAdd
         tasks={project.tasks}
@@ -147,6 +158,7 @@ function ProjectView({ project }: { project: Project }) {
           {!hasTasks ? (
             <p className="p-[18px] text-muted-foreground">Add a task and the plan draws itself here.</p>
           ) : result.ok ? (
+            <>
             <FlowDiagram
               tasks={result.tasks}
               finish={result.finish}
@@ -159,6 +171,8 @@ function ProjectView({ project }: { project: Project }) {
                 setEditingId(id);
               }}
             />
+            <CriticalStrip tasks={result.tasks} startDate={project.startDate} />
+            </>
           ) : (
             <p role="alert" className="p-[18px] font-semibold text-destructive">
               {result.warnings.join(" ")}
