@@ -27,7 +27,7 @@ export function TasksList({ tasks, scheduled, startDate, onDuration, onDone, onE
   const names = new Map(tasks.map((t) => [t.id, t.name]));
 
   return (
-    <ul className="m-0 list-none p-0" onMouseLeave={() => onHighlight?.(null)}>
+    <ul className="print-exact m-0 list-none p-0" onMouseLeave={() => onHighlight?.(null)}>
       {tasks.map((task) => (
         <TaskRow
           key={task.id}
@@ -80,12 +80,12 @@ function TaskRow({
       ref={row}
       data-id={task.id}
       {...swipe}
-      className="grid touch-pan-y grid-cols-[44px_1fr_auto_auto] items-center gap-x-2 border-b border-border/70 py-2.5 max-[520px]:grid-cols-[44px_1fr_auto]"
+      className="grid touch-pan-y grid-cols-[44px_1fr_auto_auto] items-center gap-x-2 border-b border-border/70 py-2.5 max-[520px]:grid-cols-[44px_1fr_auto] print:grid-cols-[1fr_auto]"
       onMouseEnter={() => onHighlight?.(task.id)}
       onFocus={(e) => e.target.matches(":focus-visible") && onHighlight?.(task.id)}
       onBlur={() => onHighlight?.(null)}
     >
-      <label className="-mx-1.5 grid size-11 cursor-pointer place-items-center max-[520px]:row-span-1">
+      <label className="-mx-1.5 grid size-11 cursor-pointer place-items-center max-[520px]:row-span-1 print:hidden">
         <input
           type="checkbox"
           checked={!!task.done}
@@ -95,7 +95,7 @@ function TaskRow({
         />
       </label>
 
-      <div className="min-w-0 max-[520px]:col-span-2">
+      <div className="min-w-0 max-[520px]:col-span-2 print:col-span-1">
         <span className={cn("break-words font-semibold", task.done && "text-muted-foreground line-through")}>{task.name}</span>{" "}
         {timing &&
           (timing.critical ? (
@@ -117,14 +117,17 @@ function TaskRow({
         name={task.name}
         value={task.duration}
         onChange={(d) => onDuration(task.id, d)}
-        className="max-[520px]:col-start-2 max-[520px]:row-start-2 max-[520px]:mt-1.5 max-[520px]:justify-self-start"
+        className="max-[520px]:col-start-2 max-[520px]:row-start-2 max-[520px]:mt-1.5 max-[520px]:justify-self-start print:hidden"
       />
+      <span className="hidden text-sm font-semibold print:block">
+        {task.duration} {task.duration === 1 ? "day" : "days"}
+      </span>
 
       <button
         type="button"
         onClick={(e) => onEdit(task.id, e.currentTarget)}
         aria-label={`Edit ${task.name}`}
-        className="min-h-9 min-w-11 rounded-md px-1.5 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground max-[520px]:col-start-3 max-[520px]:row-start-2 max-[520px]:mt-1.5 max-[520px]:min-h-11 max-[520px]:justify-self-end"
+        className="min-h-9 min-w-11 rounded-md px-1.5 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground print:hidden max-[520px]:col-start-3 max-[520px]:row-start-2 max-[520px]:mt-1.5 max-[520px]:min-h-11 max-[520px]:justify-self-end"
       >
         Edit
       </button>

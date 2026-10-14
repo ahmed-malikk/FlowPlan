@@ -4,7 +4,7 @@ import { CircleHelp, MoreHorizontal, Printer, Trash2 } from "lucide-react";
 import { PlanArt } from "@/components/PlanArt";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { isIsoDate } from "@/lib/plan";
+import { formatDate, isIsoDate } from "@/lib/plan";
 import type { Status } from "@/lib/status";
 
 type Props = {
@@ -55,6 +55,8 @@ export function PlanHeader({ name, startDate, status, complete, canPrint, onRena
         )}
         <span className="text-sm text-muted-foreground">{status.text}</span>
       </div>
+
+      <p className="mt-1 hidden text-sm text-muted-foreground print:block">Starts {formatDate(startDate)}</p>
 
       <div className="mt-4 flex flex-wrap items-center gap-2.5 print:hidden">
         <label className="flex h-11 items-center gap-2.5 rounded-xl border border-input bg-g0/55 pr-2 pl-3.5 text-sm text-muted-foreground">

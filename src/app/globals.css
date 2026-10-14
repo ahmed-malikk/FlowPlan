@@ -1,11 +1,6 @@
-/* Layer order: the old stylesheet sits below components and utilities, so new Tailwind classes always win. */
-@layer theme, base, legacy, components, utilities;
-
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-/* Pre-redesign components keep working while each piece moves over (issues #28 to #36). */
-@import "./legacy.css" layer(legacy);
 
 /*
  * FlowPlan design tokens: dark navy with amber.
@@ -219,6 +214,60 @@
     stroke-dashoffset: 1;
     animation: fp-draw 1.4s var(--ease-out-soft) 0.15s forwards;
   }
+}
+
+/*
+ * Printing: the page is light on paper. The same tokens switch to a print palette, so every
+ * component prints correctly without its own print rules; only what should not print is hidden
+ * (print:hidden on the header, forms, buttons and the diagram).
+ */
+@media print {
+  :root {
+    --background: #fff;
+    --foreground: #111827;
+    --card: #fff;
+    --card-foreground: #111827;
+    --popover: #fff;
+    --popover-foreground: #111827;
+    --secondary: #f3f4f6;
+    --secondary-foreground: #111827;
+    --muted: #f3f4f6;
+    --muted-foreground: #4b5563;
+    --accent: #f3f4f6;
+    --accent-foreground: #111827;
+    --border: #d1d5db;
+    --input: #9ca3af;
+    --primary: #b45309;
+    --primary-foreground: #fff;
+    --amber-text: #92400e;
+    --amber-soft: #fef3c7;
+    --slack: #2563eb;
+    --edge: #6b7280;
+    --done: #047857;
+    --surface-2: #f3f4f6;
+    --line-strong: #9ca3af;
+    --g0: #fff;
+    --g1: #fff;
+    --g2: #fff;
+    color-scheme: light;
+  }
+  html {
+    background: none !important;
+  }
+  * {
+    box-shadow: none !important;
+  }
+  li,
+  tr {
+    break-inside: avoid;
+  }
+}
+
+/* Keep bars and chips coloured on paper even when the browser's "background graphics" is off. */
+.print-exact,
+.print-exact * {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 @media (prefers-reduced-motion: reduce) {

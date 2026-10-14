@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="relative flex min-h-dvh flex-col">
           <RouteBackdrop />
           <SiteHeader />
-          <main className="container relative flex-1">{children}</main>
+          <main className="relative mx-auto w-full max-w-[1240px] flex-1 px-4 min-[521px]:px-[22px]">{children}</main>
           <SiteFooter />
           <TabBar />
         </div>

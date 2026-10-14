@@ -8,8 +8,8 @@ import { EmptyPlan } from "@/components/EmptyPlan";
 import { CriticalNote } from "@/components/CriticalNote";
 import { CriticalStrip } from "@/components/CriticalStrip";
 import { FlowDiagram } from "@/components/FlowDiagram";
-import { Gantt } from "@/components/Gantt";
 import { PlanHeader } from "@/components/PlanHeader";
+import { PrintTimeline } from "@/components/PrintTimeline";
 import { QUICK_ADD_INPUT, QuickAdd } from "@/components/QuickAdd";
 import { EditSheet } from "@/components/EditSheet";
 import { TasksList } from "@/components/TasksList";
@@ -139,7 +139,7 @@ function ProjectView({ project }: { project: Project }) {
 
       {/* Two cards of equal height side by side; on a phone one at a time, Tasks first. */}
       <div className="grid grid-cols-[minmax(0,1fr)] gap-[18px] min-[901px]:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
-        <section id="tasks-card" aria-label="Tasks" className={cn(CARD, "p-[18px] min-[901px]:overflow-auto", view === "diagram" && "max-[900px]:hidden")}>
+        <section id="tasks-card" aria-label="Tasks" className={cn(CARD, "p-[18px] min-[901px]:overflow-auto print:max-h-none print:overflow-visible print:border-0 print:p-0", view === "diagram" && "max-[900px]:hidden print:block")}>
           <h2 className="mb-1.5 text-[17px] font-bold tracking-tight">Tasks</h2>
           {hasTasks ? (
             <TasksList
@@ -199,7 +199,7 @@ function ProjectView({ project }: { project: Project }) {
         {/* The printed page keeps the timeline: a diagram is for the screen, a timeline is for paper. */}
         {hasTasks && result.ok && (
           <section aria-label="Timeline" className="hidden print:block">
-            <Gantt tasks={result.tasks} finish={result.finish} startDate={project.startDate} />
+            <PrintTimeline tasks={result.tasks} finish={result.finish} startDate={project.startDate} />
           </section>
         )}
       </div>
