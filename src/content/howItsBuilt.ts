@@ -56,7 +56,7 @@ export const ARCHITECTURE = {
 /** Update both numbers at each release from the real test run (issue #39). */
 export const TESTING = {
   heading: "Testing",
-  unitTests: 129,
+  unitTests: 132,
   items: [
     "Unit tests cover the scheduler, the plan helpers, the diagram's layout and the contrast of every colour pair.",
     "System tests drive the real app in desktop Edge, desktop Chrome and a 375 px phone view.",

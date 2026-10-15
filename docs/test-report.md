@@ -4,16 +4,16 @@
 
 ## v2.0 run (2026-10-15): the redesign
 
-Run on the production build of the `redesign-v2` branch (the commit before the merge to `main`), in the same three environments as below: desktop Edge, desktop Chrome and a 375 px phone view. The scheduler's logic and its original tests did not change.
+Final numbers: run on the local production build of `main` on 2026-10-15, after the post-release fixes (#41 to #45), in the same three environments as below: desktop Edge, desktop Chrome and a 375 px phone view. The scheduler's logic and its original tests did not change.
 
 | Level | Cases | Passed | Failed | Skipped |
 |---|---|---|---|---|
-| Unit (Vitest) | 129 | 129 | 0 | 0 |
-| System, 3 environments | 33 × 3 = 99 | 93 | 0 | 6 |
+| Unit (Vitest) | 132 | 132 | 0 | 0 |
+| System, 3 environments | 35 × 3 = 105 | 99 | 0 | 6 |
 
 **Unit tests:** 51 from version 1, plus tests for the diagram layout and geometry, the critical-path change note, the status line, short dates, the timeline ticks, the algorithm explainer, the scroll route, one-time hints and navigation, and a test that measures the WCAG contrast of every text and background colour pair.
 
-**System tests:** ST-01 to ST-17 keep their numbers and intent but drive the new screens (the New project dialog, the quick-add bar, the task list, the diagram and the edit dialog). ST-18 to ST-30 are new:
+**System tests:** ST-01 to ST-17 keep their numbers and intent but drive the new screens (the New project dialog, the quick-add bar, the task list, the diagram and the edit dialog). ST-18 to ST-35 are new:
 
 | ID | Test case |
 |---|---|
@@ -30,14 +30,23 @@ Run on the production build of the `redesign-v2` branch (the commit before the m
 | ST-28 | Tapping a task never leaves the others dimmed |
 | ST-29 | The tour shows once, is skippable, and does not return after a reload |
 | ST-30 | The slack tip explains itself once on hover, and on a tap or click any time |
+| ST-31 | While the tour is open the page is frozen and only the tour box works |
+| ST-32 | Resting the pointer on a task's edge does not make the diagram flicker |
+| ST-33 | The diagram settles and stays still at 80% browser zoom with classic scrollbars |
+| ST-34 | Scrollbars are slim and themed (a gradient thumb), on the page and in scrolling areas |
+| ST-35 | Touch screens get a route-thread scroll marker that fades out; mouse screens do not |
 
-**Skipped on purpose (4):** ST-26 is phone-only, so it is skipped in Edge and Chrome on desktop; ST-27 and ST-30 need a mouse to hover, so they are skipped in the phone view.
+**Skipped on purpose (6):** ST-26 is phone-only, so it is skipped in Edge and Chrome on desktop; ST-27, ST-30 and ST-32 need a mouse to hover, and ST-33 needs desktop scrollbars and zoom, so those four are skipped in the phone view.
 
-**Defects found by testing:** 1.
+**Defects found:** 5 (1 by the tests, 4 by using the live site afterwards; none of the last four had a test beforehand, and each now has one).
 
 | ID | Found by | Description | Severity | Fix | Status |
 |---|---|---|---|---|---|
 | [#40](https://github.com/ahmed-malikk/FlowPlan/issues/40) | Checking the phone layout against the empty-plan screen | On a phone a plan with no tasks hid its empty state and start buttons behind the Tasks / Diagram switch | Medium | `9cd16bd`: the empty state also shows inside the Tasks card on narrow screens | ✅ Fixed, covered by ST-02 |
+| [#41](https://github.com/ahmed-malikk/FlowPlan/issues/41) | Using the live site | The page could still be scrolled while the first-visit tour was open, so the highlight drifted off its target | Medium | The page is frozen while the tour is open and steps change with a smooth transition | ✅ Fixed, covered by ST-31 |
+| [#42](https://github.com/ahmed-malikk/FlowPlan/issues/42) | Using the live site | Print / PDF came out as a plain white page in the old style | Medium | Print keeps the app's own look: navy page, header, graphics, diagram, tasks and timeline | ✅ Fixed, covered by ST-24 |
+| [#43](https://github.com/ahmed-malikk/FlowPlan/issues/43) | Using the live site | Resting the pointer on a task's bottom edge made the task flip between hovered and not hovered | Medium | Hover grows the task instead of lifting it | ✅ Fixed, covered by ST-32 |
+| [#44](https://github.com/ahmed-malikk/FlowPlan/issues/44) | Using the live site, on a laptop at about 80% browser zoom | The diagram flickered constantly and the page froze: its drawing came out a fraction of a pixel bigger than its box, which added a scrollbar, which resized the box, in a loop (about 60 resizes a second) | High | The drawing is sized so rounding cannot make it overflow; rows move closer in a short board | ✅ Fixed, covered by ST-33 and a unit test |
 
 **Found while comparing the build with the approved prototype** (before release, so not logged as defects): the flow diagram clipped its last task at a 1440 px window, task rows carried long dates, and a footer repeated the header's links. Fixed in `c35552e`, checked by a new unit test that sizes the diagram for boards 700 to 1000 px wide and by screenshots of the desktop and phone layouts.
 

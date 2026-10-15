@@ -8,7 +8,7 @@
 The approach below still holds. What changed:
 
 - **Scope added:** the flow diagram (layout, arrows, highlighting, phone layout), the edit dialog, the critical-path note, onboarding (empty states, first-visit tour, slack tip), the phone layout (Tasks / Diagram switch, tab bar, swipe), the "How it's built" page, and print styles. The Gantt chart (story 5) is replaced by the diagram plus a timeline on the printed page.
-- **System tests:** ST-01 to ST-17 keep their numbers and intent against the new screens; ST-18 to ST-30 are new (listed in the [test report](test-report.md)). Four cases are skipped on purpose where they cannot apply: ST-26 is phone-only, ST-27 and ST-30 need a mouse to hover.
+- **System tests:** ST-01 to ST-17 keep their numbers and intent against the new screens; ST-18 to ST-35 are new (listed in the [test report](test-report.md)). Six cases are skipped on purpose where they cannot apply: ST-26 is phone-only; ST-27, ST-30 and ST-32 need a mouse to hover and ST-33 needs desktop scrollbars and zoom.
 - **Unit tests:** now cover the diagram layout and geometry, the critical-path change note, the status line, short dates, the algorithm explainer, the scroll route, one-time hints, and the contrast of every colour pair (WCAG AA).
 - **Accessibility:** no longer out of scope. The design targets WCAG 2.2 AA: contrast is unit tested, the dialog and keyboard behaviour are system tested, and a reduced-motion path exists for every animation. There is still no formal audit by a third party.
 - **Unchanged:** the usability test (section 8) is still to be run with 3 first-time users.

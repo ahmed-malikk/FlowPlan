@@ -37,7 +37,7 @@ What building, testing and shipping FlowPlan taught me, and what I'm changing fo
 - **Test the live site too.** The same 51 system tests passed against the deployed site, so what users get is what I tested.
 - **Use the product for real.** Loading my own 11-task plan exposed layout problems that small examples never showed.
 
-**Final numbers (v1.1):** 51 / 51 unit tests; 17 system tests × 3 environments = 51 / 51, locally and on the live site. **v2.0:** 128 / 128 unit tests; 30 system tests × 3 environments = 86 passed, 4 skipped by design, 0 failed. Details: [test plan](test-plan.md) · [test report](test-report.md).
+**Final numbers (v1.1):** 51 / 51 unit tests; 17 system tests × 3 environments = 51 / 51, locally and on the live site. **v2.0:** 132 / 132 unit tests; 35 system tests × 3 environments = 99 passed, 6 skipped by design, 0 failed. Details: [test plan](test-plan.md) · [test report](test-report.md).
 
 ## 4. Git and GitHub
 
@@ -87,6 +87,8 @@ What building, testing and shipping FlowPlan taught me, and what I'm changing fo
 - **Measure contrast, don't eyeball it.** A unit test now calculates the contrast of every text and background pair, so a colour change that fails WCAG fails the build.
 - **Every animation needs a reason and an off switch.** Motion in FlowPlan shows something (a route drawing in, a pulse down the tasks that wait for an edited one), plays a limited number of times, and has a reduced-motion version.
 - **One feature, one commit, one issue.** This time the board came first and each commit closed its issue, which is what I committed to change after version 1.
+- **Test in the user's real setup, not just mine.** After release, using the live site found four bugs my tests had missed. The worst one only showed at about 80% browser zoom with normal Windows scrollbars, where rounding made the diagram a fraction of a pixel too big and set off an endless resize loop. My test browser hid scrollbars and ran at 100%, so it never saw it. The fix started with reproducing the loop in that setup, and the new test runs in it.
+- **Find the cause before fixing.** My first fix for that flicker (a hover bug) was real but not the cause; it only looked like it because I tested my guess instead of the report. The cause was found by recreating the reporter's zoom, scrollbars and window size with the cursor parked away.
 - **Be honest about gaps.** The diagram's lines are paler than I'd like for contrast, the system tests don't run in CI yet, and the usability study is still not done. They are listed in the test report, not hidden.
 
 ## 9. What I'm changing for the next project (QueueCare)
